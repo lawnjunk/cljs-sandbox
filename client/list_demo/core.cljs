@@ -1,12 +1,36 @@
 (ns list-demo.core
   (:require
+    [ajax.core :refer [GET POST]]
     [reagent.dom]
     [re-frame.core :as reframe]
     [clojure.string :as str]))
 
+;; request
+(defn req-item-list-fetch []
+  (println "making request")
+  (POST "http://localhost:7766/api/item-list-fetch"
+     {:handler (fn [response cool]
+               (println "cool beans" response cool))
+      :response-format :json
+      :error-handler (fn [response]
+                     (println "fuckk beans" response))}))
+
+(defn req-item-create [name]
+  (POST "http://localhost:7766/api/item-create"
+     {:format :json
+      :params {:name name}
+      :handler (fn [response cool]
+               (println "item create" response cool))
+      :response-format :json
+      :error-handler (fn [response]
+                     (println "fuckk beans" response))}))
+
+;(defonce result (req-item-create "get milk"))
+(defonce result (req-item-list-fetch))
+
 ;; dispatch
 (defn store-set-value
-  [value ]
+  [value]
   (reframe/dispatch [:set-value value]))
 
 (defonce goo (store-set-value 666))
@@ -35,7 +59,7 @@
 
 (defn app []
   [:div
-   [:h1 "this is a test"]
+   [:h1 "this is a a test"]
    [value-view]
    ])
 
