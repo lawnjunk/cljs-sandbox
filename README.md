@@ -2,6 +2,7 @@
 a tiny cljs re-frame demo app.
 
 ## goals
+* css in cljs
 * state managment with local-storage support
 * ajax requests to node server
 * page routing and url params (aka /item/{id} to show a specific item)
