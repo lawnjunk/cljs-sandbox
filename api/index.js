@@ -1,9 +1,31 @@
-const cors = require('cors')
 const uuid = require('uuid')
+const cors = require('cors')
 const express = require('express')
 const onFinished = require('on-finished')
 
 let store = {}
+
+const sleep = (delayInMS) => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), delayInMS)
+  })
+}
+
+const parseIntOrDefault = (value, DEFAULT) => {
+  console.log(`value`, value, typeof value)
+  if (typeof value === 'number') {
+    return value
+  }
+  try {
+    let result = parseInt(value)
+    if (isNaN(result)){
+      return DEFAULT
+    }
+    return result
+  } catch (_error) {
+    return DEFAULT
+  }
+}
 
 let storeItemCreate = (name) => {
   let item = {
@@ -57,6 +79,24 @@ app.use((req, res, next) => {
   next()
 })
 
+app.post('/api/debug', async (req, res) => {
+  let {delayInMS, status, payload} = req.body
+  console.dir(req.body)
+  delayInMS = parseIntOrDefault(delayInMS, Math.floor(Math.random() * 500) + 100) 
+  status = parseIntOrDefault(status, 200)
+  console.log({delayInMS, status, payload})
+  await sleep(delayInMS)
+
+  if (payload.content) {
+    payload.content = payload.content.toUpperCase() + `!!`
+  }
+  if (payload) {
+    res.status(status).json(payload)
+  } else {
+    res.sendStatus(status)
+  }
+})
+
 app.post('/api/item-list-fetch', (_req, res) => {
   res.json(Object.values(store))
 })
@@ -91,5 +131,5 @@ app.post('/api/item-complete', (req, res) => {
 })
 
 app.listen(7766, () => {
-  console.log('server running on port 6666')
+  console.log('server running on port 7766')
 })

@@ -5,6 +5,7 @@
 
  :dependencies
  [[reagent                   "1.1.0"]
+  [binaryage/oops            "0.7.2"]
   [re-frame              "1.3.0-rc3"]
   [cljs-ajax                 "0.8.4"]
   [net.cgrand/macrovich      "0.2.1"]
