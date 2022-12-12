@@ -2,45 +2,80 @@
   (:require
     ["uuid" :as uuid]
     [oops.core :refer [oget oset!]]
-    [ajax.core :refer [GET POST]]
+    [ajax.core :refer [POST]]
     [reagent.dom]
     [reagent.core :as reagent]
     [re-frame.core :as reframe]
     [clojure.string :as s]))
 
-;; TODO make a simple set of store manuplation funcs
-;; set, get, mod, tmp
-
 (defn wait [ms f]
   (js/setTimeout f ms))
 
-(defn reg-sub-simple 
+(defn reg-sub-simple
   [thing]
-  (reframe/reg-sub 
-    thing 
+  (reframe/reg-sub
+    thing
     (fn [db]
       (get db thing)))) ;; dispatch
 
-(defn reg-event-db-simple
-  [event thing]
+(defn reg-event-db-simple-set
+  [set-event thing]
   (reframe/reg-event-db
-    event
+    set-event
     (fn [db [_ data]]
       (assoc db thing data))))
+
+(defn reg-event-db-simple-del
+  [del-event thing]
+  (reframe/reg-event-db
+    del-event
+    (fn [db []]
+      (dissoc db thing))))
 
 (defn store-set-counter
   [counter]
   (reframe/dispatch [:set-counter counter]))
- 
-(defn counter-inc 
+
+(defn simple-store-create
+  "thing should be a :keyword that holds
+   a value in the root of the global store"
+  [thing]
+  (let [thing-set-keyword (s/replace (str thing) ":" ":set-")
+        thing-del-keyword (s/replace (str thing) ":" ":del-")]
+    (reg-event-db-simple-set thing-set-keyword thing)
+    (reg-event-db-simple-del thing-del-keyword thing)
+    (reg-sub-simple thing)
+    (let [thing-get (fn []
+                   @(reframe/subscribe [thing]))
+          thing-set (fn [value]
+                   (reframe/dispatch [thing-set-keyword value]))
+          thing-del (fn []
+                   (reframe/dispatch [thing-del-keyword]))
+          thing-tmp (fn [delayInMS value]
+                   (thing-set value)
+                   (wait delayInMS #(thing-del)))
+          thing-mod (fn [handler]
+                   (thing-set (handler (thing-get))))]
+    {:get thing-get
+     :set thing-set
+     :del thing-del
+     :mod thing-mod
+     :tmp thing-tmp})))
+
+(def lala-store (simple-store-create :lala))
+((:set lala-store) "cool")
+
+(def tmp-lucky-number-store (simple-store-create :tmp-lucky-number))
+
+(defn counter-inc
   []
   (let [value @(reframe/subscribe [:counter])]
     (store-set-counter (inc value))))
 
-(reg-event-db-simple :set-spinner-content :spinner-content)
+(reg-event-db-simple-set :set-spinner-content :spinner-content)
 (reg-sub-simple :spinner-content)
 
-(reg-event-db-simple :set-counter :counter)
+(reg-event-db-simple-set :set-counter :counter)
 (reg-sub-simple :counter)
 
 ;; view
@@ -50,10 +85,9 @@
     [:div
      [:button {:on-click #(counter-inc)} "increment"] 
      [:button {:on-click #(do-dec)} "decriment"]
-     [:p "the counter: " counter]
-     ]))
+     [:p "the counter: " counter]]))
 
-(defn req-ctx-create 
+(defn req-ctx-create
   ([url]
     (req-ctx-create url (uuid/v4)))
   ([url tt]
@@ -63,8 +97,8 @@
      :error nil
      :success nil}))
 
-(defn dbg 
-  ([stuff] 
+(defn dbg
+  ([stuff]
     (println "DBG: " stuff)
     stuff)
   ([title stuff]
@@ -136,7 +170,7 @@
 
 (defn req-debug [tt status delayInMS payload handler]
   (request
-    { :tt tt 
+    { :tt tt
       :url "/api/debug"
       :handler handler
       :payload {:status status
@@ -173,11 +207,25 @@
            (if (not pending)
              [:div content])]))]))
 
+(defn el-lala []
+  (let [lala-data ((:get lala-store))]
+    [:div
+     [:button {:on-click #((:mod lala-store) (fn [d] (str d "!!")))} "click for more !"]
+     [:p "this is lala data: " lala-data]]))
+
+(defn el-lucky-number []
+  (let [value ((:get tmp-lucky-number-store))]
+    (if value [:div {:class "hello"}
+               [:h1 "you are lucky if you can see this"]
+               [:h2 value]])))
+
 (defn app []
   [:div
    [:h1 "app"]
+   [el-lala]
    [el-counter]
    [el-spinner-test]
+   [el-lucky-number]
    ])
 
 (defn render []
@@ -191,6 +239,7 @@
 (defn init []
   (js/console.log "init ")
   (store-set-counter 666)
+  ((:tmp tmp-lucky-number-store) 2000 (js/Math.floor (* 100 (js/Math.random))))
   (render-app))
 
 (defn ^:dev/before-load stop []
