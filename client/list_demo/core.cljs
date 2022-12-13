@@ -1,12 +1,53 @@
 (ns list-demo.core
   (:require
     ["uuid" :as uuid]
+    [clojure.walk :as walk]
     [oops.core :refer [oget oset!]]
     [ajax.core :refer [POST]]
     [reagent.dom]
     [reagent.core :as reagent]
     [re-frame.core :as reframe]
+    [spade.core :refer [defclass]]
     [clojure.string :as s]))
+
+(def keywordify walk/keywordize-keys)
+
+(defclass css-basic []
+  {:background "#fff" 
+   :color "black"
+   :font-weight "normal"
+   :padding "10px"
+   :margin-top "10px"
+   })
+
+(defclass css-blue-box []
+  {:background "#a0a0ff"
+   :padding "15px"})
+
+(defclass css-counter-color [num]
+  (if (even? num) {:background "red"} {:background "orange"}))
+
+(defclass css-f-button []
+   {:background "blue"
+    :color "white"
+    :padding "5px"
+    :margin-top "5px"
+    :margin-right "5px"
+    :font-weight "bold" }
+   [:&:hover
+    {:background "green" }]
+   [:&:active
+    {:background "red" }])
+
+(defn vconcat [a b] (vec (concat a b )))
+
+(defn el-create
+  [tag-name style]
+  (fn [options & children]
+    (vconcat [tag-name (merge {:class (style)} options)] children)))
+
+(def Button (el-create :button css-f-button))
+(def BlueBox (el-create :div css-blue-box))
 
 (defn wait [ms f]
   (js/setTimeout f ms))
@@ -62,6 +103,7 @@
      :mod thing-mod
      :tmp thing-tmp})))
 
+
 (def lala-store (simple-store-create :lala))
 ((:set lala-store) "cool")
 
@@ -82,7 +124,7 @@
 (defn el-counter []
   (let [counter @(reframe/subscribe [:counter])
         do-dec #(store-set-counter (- counter 1))]
-    [:div
+    [:div {:class (css-counter-color counter)}
      [:button {:on-click #(counter-inc)} "increment"] 
      [:button {:on-click #(do-dec)} "decriment"]
      [:p "the counter: " counter]]))
@@ -139,8 +181,7 @@
   ":tt optional tt
    :url api endpoint
    :payload data to send as json
-   :handler
-   "
+   :handler"
   [data]
   (let [tt (get data :tt (uuid/v4))
         handler (get data :handler (partial println "DEFAULT_HANDLER:" ))
@@ -154,19 +195,19 @@
                :response-format :json
                :params (if (nil? payload) {} payload)
                :handler (fn [response]
-                          (reframe/dispatch [:req-ctx-success tt]) 
-                          (handler {:success true :data response}))
+                          (reframe/dispatch [:req-ctx-success tt])
+                          (handler {:success true :data (keywordify response)}))
                :error-handler (fn [response]
                                 (let [status (:status response)
                                       success (contains? #{200 201} status)
                                       data (get response :response nil)]
-                                  (if success 
+                                  (if success
                                     ((reframe/dispatch [:req-ctx-success tt])
                                      (handler {:success success
-                                               :data data})) 
+                                               :data data}))
                                     ((reframe/dispatch [:req-ctx-error tt response])
-                                     (handler {:success success 
-                                               :data data})))))})))
+                                     (handler {:success success
+                                               :data (keywordify data)})))))})))
 
 (defn req-debug [tt status delayInMS payload handler]
   (request
@@ -185,8 +226,9 @@
              (fn [result]
                (wait 2000 #(reset! el-spinner-tt (uuid/v4)))
                (let [{success :success data :data} result]
+                 (println "new data" data)
                  (if success
-                   (reframe/dispatch [:set-spinner-content (get data "content" "gooo")])
+                   (reframe/dispatch [:set-spinner-content (get data :content "gooo")])
                    (reframe/dispatch [:set-spinner-content "THERE WAS AN ERROR"]))))))
 
 (defn el-spinner-test []
@@ -226,6 +268,19 @@
    [el-counter]
    [el-spinner-test]
    [el-lucky-number]
+   [BlueBox {} "cool i mean"
+    [BlueBox {:class (css-basic)} "isnt" 
+     [BlueBox {} "it"]]
+     [BlueBox {:class (css-basic)} "real nuts"] 
+    ]
+   [Button {:on-click #(println "i was clicked" (js/Math.random))} "HEELO"]
+   [Button {} "cool beans"]
+   [Button {} "multi" " children"]
+   (map #(identity [Button
+                    {:key (str "wat" %)
+                     :on-click (partial println "haha" %)}
+                    (str "clickr # " %)])
+        (range 0 10))
    ])
 
 (defn render []

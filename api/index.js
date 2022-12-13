@@ -91,7 +91,18 @@ app.post('/api/debug', async (req, res) => {
     payload.content = payload.content.toUpperCase() + `!!`
   }
   if (payload) {
-    res.status(status).json(payload)
+    res.status(status).json({
+      ...payload,
+      luckNumber: Math.random(),
+      example: {
+        cool: "beans",
+        list: [
+          {nice: "one"},
+          {nice: "two"},
+          {nice: "three"},
+        ]
+      }
+    })
   } else {
     res.sendStatus(status)
   }
