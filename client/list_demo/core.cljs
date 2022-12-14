@@ -7,13 +7,23 @@
     [reagent.dom]
     [reagent.core :as reagent]
     [re-frame.core :as reframe]
+    [secretary.core :as secretary]
     [spade.core :refer [defclass]]
-    [clojure.string :as s]))
+    [clojure.string :as s])
+  (:require-macros
+    [secretary.core :refer [defroute]]))
 
 (def keywordify walk/keywordize-keys)
 
+(defn get-uri-hash []
+  (let [hash js/window.location.hash]
+    (if hash hash "")))
+
+(def log js/console.log)
+
+
 (defclass css-basic []
-  {:background "#fff" 
+  {:background "#fff"
    :color "black"
    :font-weight "normal"
    :padding "10px"
@@ -80,32 +90,34 @@
 (defn simple-store-create
   "thing should be a :keyword that holds
    a value in the root of the global store"
-  [thing]
-  (let [thing-set-keyword (s/replace (str thing) ":" ":set-")
-        thing-del-keyword (s/replace (str thing) ":" ":del-")]
-    (reg-event-db-simple-set thing-set-keyword thing)
-    (reg-event-db-simple-del thing-del-keyword thing)
-    (reg-sub-simple thing)
-    (let [thing-get (fn []
-                   @(reframe/subscribe [thing]))
-          thing-set (fn [value]
-                   (reframe/dispatch [thing-set-keyword value]))
-          thing-del (fn []
-                   (reframe/dispatch [thing-del-keyword]))
-          thing-tmp (fn [delayInMS value]
-                   (thing-set value)
-                   (wait delayInMS #(thing-del)))
-          thing-mod (fn [handler]
-                   (thing-set (handler (thing-get))))]
-    {:get thing-get
-     :set thing-set
-     :del thing-del
-     :mod thing-mod
-     :tmp thing-tmp})))
+  ([thing]
+    (simple-store-create thing nil))
+  ([thing default]
+    (let [thing-set-keyword (s/replace (str thing) ":" ":set-")
+          thing-del-keyword (s/replace (str thing) ":" ":del-")]
+      (reg-event-db-simple-set thing-set-keyword thing)
+      (reg-event-db-simple-del thing-del-keyword thing)
+      (reg-sub-simple thing)
+      (let [thing-get (fn []
+                     @(reframe/subscribe [thing]))
+            thing-set (fn [value]
+                     (reframe/dispatch [thing-set-keyword value]))
+            thing-del (fn []
+                     (reframe/dispatch [thing-del-keyword]))
+            thing-tmp (fn [delayInMS value]
+                     (thing-set value)
+                     (wait delayInMS #(thing-del)))
+            thing-mod (fn [handler]
+                     (thing-set (handler (thing-get))))]
+        (if-not (nil? default) (thing-set default))
+      {:get thing-get
+       :set thing-set
+       :del thing-del
+       :mod thing-mod
+       :tmp thing-tmp}))))
 
-
-(def lala-store (simple-store-create :lala))
-((:set lala-store) "cool")
+(defonce lala-store (simple-store-create :lala "cool"))
+(defonce route-store (simple-store-create :route {:page "/" :args []}))
 
 (def tmp-lucky-number-store (simple-store-create :tmp-lucky-number))
 
@@ -124,7 +136,7 @@
 (defn el-counter []
   (let [counter @(reframe/subscribe [:counter])
         do-dec #(store-set-counter (- counter 1))]
-    [:div {:class (css-counter-color counter)}
+    [:div {:class (css-counter-color (if (number? counter) counter 0))}
      [:button {:on-click #(counter-inc)} "increment"] 
      [:button {:on-click #(do-dec)} "decriment"]
      [:p "the counter: " counter]]))
@@ -219,6 +231,7 @@
                 :payload payload}}))
 
 
+
 (def el-spinner-tt (reagent/atom (uuid/v4)))
 
 (defn req-spinner-test [tt]
@@ -261,41 +274,59 @@
                [:h1 "you are lucky if you can see this"]
                [:h2 value]])))
 
+(defn page-1 []
+  [:div "page 1 is a humble simple page"])
+
+(defn page-2 [hash-id]
+  [:div "page 2 has a hash-id" " " hash-id])
+
+(secretary/set-config! :prefix "#")
+
+(defroute route-page-2-empty "/goop" []
+  ((:set route-store) {:page :second :args ["none project seleced"]}))
+
+(defroute route-page-2 "/goop/:id" [id]
+  ((:set route-store) {:page :second :args [id]}))
+
+(defroute route-page-1 "*" []
+  ((:set route-store) {:page :landing :args []}))
+
+
 (defn app []
-  [:div
-   [:h1 "app"]
-   [el-lala]
-   [el-counter]
-   [el-spinner-test]
-   [el-lucky-number]
-   [BlueBox {} "cool i mean"
-    [BlueBox {:class (css-basic)} "isnt" 
-     [BlueBox {} "it"]]
-     [BlueBox {:class (css-basic)} "real nuts"] 
-    ]
-   [Button {:on-click #(println "i was clicked" (js/Math.random))} "HEELO"]
-   [Button {} "cool beans"]
-   [Button {} "multi" " children"]
-   (map #(identity [Button
-                    {:key (str "wat" %)
-                     :on-click (partial println "haha" %)}
-                    (str "clickr # " %)])
-        (range 0 10))
-   ])
+  (let [route ((:get route-store))]
+    (println "route" route)
+    [:div
+     (case (:page route)
+       :landing [page-1]
+       :second (vconcat [page-2] (:args route))
+       [page-1])
+     [:h1 "app"]
+     [el-lala]
+     [el-counter]
+     [el-spinner-test]
+     [el-lucky-number]
+     [BlueBox {} "c ooooool hhaha i mean"
+      [BlueBox {:class (css-basic)} "isnt" 
+       [BlueBox {} "it"]]
+       [BlueBox {:class (css-basic)} "real nuts"] 
+      ]
+     [:a {:href "/#/beans"} "goto bean"]
+     [:a {:href "/#/goop "} "goto goop"]
+     [:a {:href "/#/goop/zip123 "} "goto goop goop"]
+     [Button {:on-click #(println "i was clicked" (js/Math.random))} "HEELO"]
+     [Button {} "cool beans"]
+     [Button {} "multi" " children"]
+     (map #(identity [Button
+                      {:key (str "wat" %)
+                       :on-click (partial println "haha" %)}
+                      (str "clickr # " %)])
+          (range 0 10))
+   ]))
+
 
 (defn render []
   (let [container (js/document.getElementById "app-container")]
     (reagent.dom/render [app] container)))
-
-(defn ^:dev/after-load render-app []
-  (js/console.log "after-load start") 
-  (render))
-
-(defn init []
-  (js/console.log "init ")
-  (store-set-counter 666)
-  ((:tmp tmp-lucky-number-store) 2000 (js/Math.floor (* 100 (js/Math.random))))
-  (render-app))
 
 (defn ^:dev/before-load stop []
   (js/console.log  "before-load stop"))
@@ -309,3 +340,17 @@
   (request
     { :url "/api/item-create"
       :payload { :name name }}))
+
+(defn ^:dev/after-load render-app []
+  (js/console.log "after-load start") 
+  (reframe/clear-subscription-cache!)
+  (render))
+
+(defn init []
+  (secretary/dispatch! (get-uri-hash))
+  (js/window.addEventListener "hashchange" #(secretary/dispatch! (get-uri-hash)))
+  (js/console.log "init ")
+  (store-set-counter 666)
+  ((:tmp tmp-lucky-number-store) 2000 (js/Math.floor (* 100 (js/Math.random))))
+  (render-app))
+
