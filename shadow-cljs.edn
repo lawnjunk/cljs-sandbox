@@ -22,7 +22,7 @@
           {:target :browser
            :output-dir "public/js"
            :asset-path "/js"
-           :modules {:main {:init-fn list-demo.core/init}}
+           :modules {:sandbox {:init-fn sandbox.main/init }}
            :devtools {
                       :http-root "public"
                       :http-port 9999

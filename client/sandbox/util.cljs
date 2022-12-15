@@ -1,4 +1,4 @@
-(ns list-demo.util)
+(ns sandbox.util)
 
 (defn wait [ms f]
   (js/setTimeout f ms))

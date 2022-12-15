@@ -1,8 +1,8 @@
-(ns list-demo.el.framework
+(ns sandbox.el.framework
   (:require
     [spade.core :refer [defclass]]
-    [list-demo.style :refer [color]]
-    [list-demo.util :as util]))
+    [sandbox.style :refer [color]]
+    [sandbox.util :as util]))
 
 
 (defn- el-create-no-css

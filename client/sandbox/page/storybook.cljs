@@ -1,7 +1,7 @@
-(ns list-demo.page.storybook
+(ns sandbox.page.storybook
   (:require 
     [reagent.core :as reagent]
-    [list-demo.el.framework :as <>]))
+    [sandbox.el.framework :as <>]))
 
 (def uri-page-storybook "/#/storybook")
 

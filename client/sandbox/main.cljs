@@ -1,4 +1,4 @@
-(ns list-demo.core
+(ns sandbox.main
   (:require
     ["uuid" :as uuid]
     [clojure.walk :refer [keywordize-keys]]
@@ -10,10 +10,10 @@
     [secretary.core :as secretary]
     [spade.core :refer [defclass]]
     [clojure.string :as s]
-    [list-demo.el.framework :as <>]
-    [list-demo.util :as util]
-    [list-demo.util :refer [xxl xxp]]
-    [list-demo.page.storybook :refer [page-storybook]]
+    [sandbox.el.framework :as <>]
+    [sandbox.util :as util]
+    [sandbox.util :refer [xxl xxp]]
+    [sandbox.page.storybook :refer [page-storybook]]
     )
   (:require-macros
     [secretary.core :refer [defroute]]))
@@ -306,7 +306,7 @@
    ]))
 
 (defn render []
-  (let [container (js/document.getElementById "app-container")]
+  (let [container (js/document.getElementById "sandbox-container")]
     (reagent.dom/render [app] container)))
 
 (defn ^:dev/before-load stop []

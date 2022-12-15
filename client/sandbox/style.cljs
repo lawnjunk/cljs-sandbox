@@ -1,4 +1,4 @@
-(ns list-demo.style
+(ns sandbox.style
   (:require 
     [reagent.core :as reagent]))
 
