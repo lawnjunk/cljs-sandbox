@@ -1,0 +1,32 @@
+@font-face {
+  font-family: "Roboto Mono";
+  src: url("/RobotoMono.ttf");
+}
+
+html {
+  font-size: 100%;
+}
+
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+  border: none;
+  text-decoration: none;
+  font-style: normal;
+  font-family: "Roboto Mono";
+  box-sizing: border-box;
+  background: none;
+  color: inherit;
+}
+
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  box-shadow: none;
+  outline: #000 dotted 2px;
+  outline-offset: .05em;
+}
