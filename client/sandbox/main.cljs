@@ -10,16 +10,15 @@
     [secretary.core :as secretary]
     [spade.core :refer [defclass]]
     [clojure.string :as s]
-    [sandbox.el.framework :as <>]
+    [sandbox.base :as <>]
     [sandbox.util :as util]
     [sandbox.util :refer [xxl xxp]]
     [sandbox.page.storybook :refer [page-storybook]]
+    [sandbox.unit.counter :refer [unit-counter]]
     )
   (:require-macros
     [secretary.core :refer [defroute]]))
 
-(defclass css-counter-color [num]
-  {:background  (str "hsl(" (abs (mod num 360)) ",96%,70%)")})
 
 (defclass css-f-button []
    {:background "blue"
@@ -47,23 +46,12 @@
     (fn [db [_ data]]
       (assoc db thing data))))
 
-(defn reg-event-db-simple-inc
-  [set-event thing]
-  (reframe/reg-event-db
-    set-event
-    (fn [db [_ data]]
-      (assoc db thing (+ (get db thing) data)))))
-
 (defn reg-event-db-simple-del
   [del-event thing]
   (reframe/reg-event-db
     del-event
     (fn [db []]
       (dissoc db thing))))
-
-(defn store-set-counter
-  [value]
-  (reframe/dispatch [:set-counter value]))
 
 (defn simple-store-create
   "thing should be a :keyword that holds
@@ -98,37 +86,11 @@
 (defonce route-store (simple-store-create :route {:page "/" :args []}))
 (def tmp-lucky-number-store (simple-store-create :tmp-lucky-number))
 
-; TODO siik counter mods
-; * toggle auto
-; * auto speed control
-; * increment control
-; * if-not is-auto? maunal up/down
-; * counter-inc should use a 
-; * saturation/light controll
 
-(defn counter-inc
-  []
-  (reframe/dispatch 
-    [:inc-counter (js/Math.random)]))
-
-(defonce counter-interval  (js/setInterval #(counter-inc) 5))
 
 (reg-event-db-simple-set :set-spinner-content :spinner-content)
 (reg-sub-simple :spinner-content)
 
-
-(reg-event-db-simple-set :set-counter :counter)
-(reg-event-db-simple-inc :inc-counter :counter)
-(reg-sub-simple :counter)
-
-;; view
-(defn el-counter []
-  (let [counter @(reframe/subscribe [:counter])
-        do-dec #(store-set-counter (- counter 1))]
-    [:div {:class (css-counter-color (if (number? counter) counter 0))}
-     [<>/Button {:on-click #(counter-inc)} "increment"] 
-     [<>/Button {:on-click #(do-dec)} "decriment"]
-     [:p "the counter: " counter]]))
 
 (defn req-ctx-create
   ([url]
@@ -288,7 +250,7 @@
        :storybook (util/vconcat [page-storybook] (:args route))
        [page-1])
      [:h1 "app"]
-     [el-counter]
+     [unit-counter]
      [el-spinner-test]
      [el-lucky-number]
      [<>/Goto {:href "/#/storybook" } "storybook"]
@@ -331,9 +293,7 @@
   (secretary/dispatch! (util/location-get))
   (js/window.addEventListener "hashchange" #(secretary/dispatch! (util/location-get)))
   (xxl "init ")
-  (store-set-counter  -666)
+  (reframe/dispatch [:set-counter -666])
   ((:tmp tmp-lucky-number-store) 2000 (js/Math.floor (* 100 (js/Math.random))))
   (render-app))
 
-
-(store-set-counter 5)

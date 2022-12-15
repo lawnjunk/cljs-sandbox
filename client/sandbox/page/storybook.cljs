@@ -1,7 +1,7 @@
 (ns sandbox.page.storybook
-  (:require 
+  (:require
     [reagent.core :as reagent]
-    [sandbox.el.framework :as <>]))
+    [sandbox.base :as <>]))
 
 (def uri-page-storybook "/#/storybook")
 
@@ -12,6 +12,7 @@
 ; TODO store.params.pagename ur somthing auto mod querystring
 ; * param-set [page-name param value]
 ; * param-get [page-name] -> map of pages params
+; * perhaps control with [Select {:option value}]
 
 ; TODO siik storybook mods
 ; * toggle :main.content size (small, med, large)
@@ -19,11 +20,11 @@
 ; * toggle :theme-dark :theme-light
 
 (defn page-storybook []
-  (let [selected (reagent/atom nil)] 
+  (let [selected (reagent/atom nil)]
     [:div
      [:header]
-     [:section.left-panel 
-      [:nav 
+     [:section.left-panel
+      [:nav
        [el-storybook-nav-item "boring"]
        [el-storybook-nav-item "interesting"]
        [el-storybook-nav-item "spinner"]

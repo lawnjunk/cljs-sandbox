@@ -1,4 +1,4 @@
-(ns sandbox.el.framework
+(ns sandbox.base
   (:require
     [spade.core :refer [defclass]]
     [sandbox.style :refer [color]]
