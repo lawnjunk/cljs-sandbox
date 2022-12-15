@@ -2,7 +2,8 @@
   (:require
     [spade.core :refer [defclass]]
     [list-demo.style :refer [color]]
-    [list-demo.util.util :as util]))
+    [list-demo.util :as util]))
+
 
 (defn- el-create-no-css
   [tag-name ]

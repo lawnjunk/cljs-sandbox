@@ -1,7 +1,8 @@
 (ns list-demo.style
   (:require 
-    [garden.selectors :refer [specificity]]
     [reagent.core :as reagent]))
+
+; TODO make color a reframe thang
 
 (def color (reagent/atom
   {:container-bg " #deddda"
@@ -9,6 +10,7 @@
    :button-main "#B9C09E"
    :button-focus "#a7aa98"
    :button-active "#979b85"
+   :peach "#FC9A69"
    }))
 
 

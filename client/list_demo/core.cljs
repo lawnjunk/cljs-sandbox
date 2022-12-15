@@ -11,30 +11,13 @@
     [spade.core :refer [defclass]]
     [clojure.string :as s]
     [list-demo.el.framework :as <>]
-    [list-demo.util.util :as util])
+    [list-demo.util :as util]
+    [list-demo.util :refer [xxl xxp]]
+    [list-demo.page.storybook :refer [page-storybook]]
+    )
   (:require-macros
     [secretary.core :refer [defroute]]))
 
-(defn get-uri-hash []
-  (let [hash js/window.location.hash]
-    (if hash hash "")))
-
-(def log js/console.log)
-
-(defclass css-basic []
-  {:background "#fff"
-   :color "black"
-   :font-weight "normal"
-   :padding "10px"
-   :margin-top "10px"
-   })
-
-(defclass css-blue-box []
-  {:background "#a0a0ff"
-   :padding "15px"})
-
-; (defclass css-counter-color [num]
-;   (if (even? num) {:background "red"} {:background "orange"}))
 (defclass css-counter-color [num]
   {:background  (str "hsl(" (abs (mod num 360)) ",96%,70%)")})
 
@@ -50,18 +33,6 @@
    [:&:active
     {:background "red" }])
 
-(defn vconcat [a b] (vec (concat a b )))
-
-(defn el-create
-  [tag-name style]
-  (fn [options & children]
-    (vconcat [tag-name (merge {:class (style)} options)] children)))
-
-(def BlueBox (el-create :div css-blue-box))
-
-(defn wait [ms f]
-  (js/setTimeout f ms))
-
 (defn reg-sub-simple
   [thing]
   (reframe/reg-sub
@@ -76,6 +47,13 @@
     (fn [db [_ data]]
       (assoc db thing data))))
 
+(defn reg-event-db-simple-inc
+  [set-event thing]
+  (reframe/reg-event-db
+    set-event
+    (fn [db [_ data]]
+      (assoc db thing (+ (get db thing) data)))))
+
 (defn reg-event-db-simple-del
   [del-event thing]
   (reframe/reg-event-db
@@ -85,8 +63,7 @@
 
 (defn store-set-counter
   [value]
-  (reframe/dispatch [:set-counter value])
-  value)
+  (reframe/dispatch [:set-counter value]))
 
 (defn simple-store-create
   "thing should be a :keyword that holds
@@ -107,7 +84,7 @@
                      (reframe/dispatch [thing-del-keyword]))
             thing-tmp (fn [delayInMS value]
                      (thing-set value)
-                     (wait delayInMS #(thing-del)))
+                     (util/wait delayInMS #(thing-del)))
             thing-mod (fn [handler]
                      (thing-set (handler (thing-get))))]
         (if-not (nil? default) (thing-set default))
@@ -119,24 +96,30 @@
 
 (defonce lala-store (simple-store-create :lala "cool"))
 (defonce route-store (simple-store-create :route {:page "/" :args []}))
-
 (def tmp-lucky-number-store (simple-store-create :tmp-lucky-number))
+
+; TODO siik counter mods
+; * toggle auto
+; * auto speed control
+; * increment control
+; * if-not is-auto? maunal up/down
+; * counter-inc should use a 
+; * saturation/light controll
 
 (defn counter-inc
   []
-  (let [value @(reframe/subscribe [:counter])]
-    (store-set-counter (+ value 10))
-  value))
+  (reframe/dispatch 
+    [:inc-counter (js/Math.random)]))
 
-(js/setInterval #(counter-inc) 1000)
+(defonce counter-interval  (js/setInterval #(counter-inc) 5))
 
 (reg-event-db-simple-set :set-spinner-content :spinner-content)
 (reg-sub-simple :spinner-content)
 
-(reg-event-db-simple-set :set-counter :counter)
-(reg-sub-simple :counter)
 
-(store-set-counter (+ 10 @(reframe/subscribe [:counter])))
+(reg-event-db-simple-set :set-counter :counter)
+(reg-event-db-simple-inc :inc-counter :counter)
+(reg-sub-simple :counter)
 
 ;; view
 (defn el-counter []
@@ -243,7 +226,7 @@
 (defn req-spinner-test [tt]
   (req-debug tt 200 2000 {:content "ping pong"} 
              (fn [result]
-               (wait 2000 #(reset! el-spinner-tt (uuid/v4)))
+               (util/wait 2000 #(reset! el-spinner-tt (uuid/v4)))
                (let [{success :success data :data} result]
                  (println "new data" data)
                  (if success
@@ -268,11 +251,6 @@
            (if (not pending)
              [:div content])]))]))
 
-(defn el-lala []
-  (let [lala-data ((:get lala-store))]
-    [:div
-     [:button {:on-click #((:mod lala-store) (fn [d] (str d "!!")))} "click for more !"]
-     [:p "this is lala data: " lala-data]]))
 
 (defn el-lucky-number []
   (let [value ((:get tmp-lucky-number-store))]
@@ -287,6 +265,9 @@
   [:div "page 2 has a hash-id" " " hash-id])
 
 (secretary/set-config! :prefix "#")
+
+(defroute route-page-storybook "/storybook" [_ query]
+  ((:set route-store) {:page :storybook :args [query]}))
 
 (defroute route-page-2-empty "/goop" []
   ((:set route-store) {:page :second :args ["none project seleced"]}))
@@ -303,19 +284,14 @@
     [<>/Container { }
      (case (:page route)
        :landing [page-1]
-       :second (vconcat [page-2] (:args route))
+       :second (util/vconcat [page-2] (:args route))
+       :storybook (util/vconcat [page-storybook] (:args route))
        [page-1])
      [:h1 "app"]
-     [el-lala]
      [el-counter]
      [el-spinner-test]
      [el-lucky-number]
-     [BlueBox {} "b ooooool hhaha i mean"
-      [BlueBox {:class (css-basic)} "isnt" 
-       [BlueBox {} "it"]]
-       [BlueBox {:class (css-basic)} "real nuts"] 
-      ]
-     [<>/Goto {:href "/#/goop/nononono" } "lulwat"]
+     [<>/Goto {:href "/#/storybook" } "storybook"]
      [:a {:href "/#/beans"} "goto bean"]
      [:a {:href "/#/goop "} "goto goop"]
      [:a {:href "/#/goop/zip123 "} "goto goop goop"]
@@ -334,7 +310,7 @@
     (reagent.dom/render [app] container)))
 
 (defn ^:dev/before-load stop []
-  (js/console.log  "before-load stop"))
+  (xxl "before-load stop"))
 
 ;; request
 (defn req-item-list-fetch []
@@ -347,15 +323,15 @@
       :payload { :name name }}))
 
 (defn ^:dev/after-load render-app []
-  (js/console.log "after-load start") 
+  (xxl "after-load start") 
   (reframe/clear-subscription-cache!)
   (render))
 
 (defn init []
-  (secretary/dispatch! (get-uri-hash))
-  (js/window.addEventListener "hashchange" #(secretary/dispatch! (get-uri-hash)))
-  (js/console.log "init ")
-  (store-set-counter 666)
+  (secretary/dispatch! (util/location-get))
+  (js/window.addEventListener "hashchange" #(secretary/dispatch! (util/location-get)))
+  (xxl "init ")
+  (store-set-counter  -666)
   ((:tmp tmp-lucky-number-store) 2000 (js/Math.floor (* 100 (js/Math.random))))
   (render-app))
 
