@@ -1,7 +1,7 @@
 (ns list-demo.core
   (:require
     ["uuid" :as uuid]
-    [clojure.walk :as walk]
+    [clojure.walk :refer [keywordize-keys]]
     [oops.core :refer [oget oset!]]
     [ajax.core :refer [POST]]
     [reagent.dom]
@@ -9,18 +9,17 @@
     [re-frame.core :as reframe]
     [secretary.core :as secretary]
     [spade.core :refer [defclass]]
-    [clojure.string :as s])
+    [clojure.string :as s]
+    [list-demo.el.framework :as <>]
+    [list-demo.util.util :as util])
   (:require-macros
     [secretary.core :refer [defroute]]))
-
-(def keywordify walk/keywordize-keys)
 
 (defn get-uri-hash []
   (let [hash js/window.location.hash]
     (if hash hash "")))
 
 (def log js/console.log)
-
 
 (defclass css-basic []
   {:background "#fff"
@@ -34,8 +33,10 @@
   {:background "#a0a0ff"
    :padding "15px"})
 
+; (defclass css-counter-color [num]
+;   (if (even? num) {:background "red"} {:background "orange"}))
 (defclass css-counter-color [num]
-  (if (even? num) {:background "red"} {:background "orange"}))
+  {:background  (str "hsl(" (abs (mod num 360)) ",96%,70%)")})
 
 (defclass css-f-button []
    {:background "blue"
@@ -56,7 +57,6 @@
   (fn [options & children]
     (vconcat [tag-name (merge {:class (style)} options)] children)))
 
-(def Button (el-create :button css-f-button))
 (def BlueBox (el-create :div css-blue-box))
 
 (defn wait [ms f]
@@ -84,8 +84,9 @@
       (dissoc db thing))))
 
 (defn store-set-counter
-  [counter]
-  (reframe/dispatch [:set-counter counter]))
+  [value]
+  (reframe/dispatch [:set-counter value])
+  value)
 
 (defn simple-store-create
   "thing should be a :keyword that holds
@@ -124,7 +125,10 @@
 (defn counter-inc
   []
   (let [value @(reframe/subscribe [:counter])]
-    (store-set-counter (inc value))))
+    (store-set-counter (+ value 10))
+  value))
+
+(js/setInterval #(counter-inc) 1000)
 
 (reg-event-db-simple-set :set-spinner-content :spinner-content)
 (reg-sub-simple :spinner-content)
@@ -132,13 +136,15 @@
 (reg-event-db-simple-set :set-counter :counter)
 (reg-sub-simple :counter)
 
+(store-set-counter (+ 10 @(reframe/subscribe [:counter])))
+
 ;; view
 (defn el-counter []
   (let [counter @(reframe/subscribe [:counter])
         do-dec #(store-set-counter (- counter 1))]
     [:div {:class (css-counter-color (if (number? counter) counter 0))}
-     [:button {:on-click #(counter-inc)} "increment"] 
-     [:button {:on-click #(do-dec)} "decriment"]
+     [<>/Button {:on-click #(counter-inc)} "increment"] 
+     [<>/Button {:on-click #(do-dec)} "decriment"]
      [:p "the counter: " counter]]))
 
 (defn req-ctx-create
@@ -208,7 +214,7 @@
                :params (if (nil? payload) {} payload)
                :handler (fn [response]
                           (reframe/dispatch [:req-ctx-success tt])
-                          (handler {:success true :data (keywordify response)}))
+                          (handler {:success true :data (keywordize-keys response)}))
                :error-handler (fn [response]
                                 (let [status (:status response)
                                       success (contains? #{200 201} status)
@@ -219,7 +225,7 @@
                                                :data data}))
                                     ((reframe/dispatch [:req-ctx-error tt response])
                                      (handler {:success success
-                                               :data (keywordify data)})))))})))
+                                               :data (keywordize-keys data)})))))})))
 
 (defn req-debug [tt status delayInMS payload handler]
   (request
@@ -291,11 +297,10 @@
 (defroute route-page-1 "*" []
   ((:set route-store) {:page :landing :args []}))
 
-
 (defn app []
   (let [route ((:get route-store))]
     (println "route" route)
-    [:div
+    [<>/Container { }
      (case (:page route)
        :landing [page-1]
        :second (vconcat [page-2] (:args route))
@@ -305,24 +310,24 @@
      [el-counter]
      [el-spinner-test]
      [el-lucky-number]
-     [BlueBox {} "c ooooool hhaha i mean"
+     [BlueBox {} "b ooooool hhaha i mean"
       [BlueBox {:class (css-basic)} "isnt" 
        [BlueBox {} "it"]]
        [BlueBox {:class (css-basic)} "real nuts"] 
       ]
+     [<>/Goto {:href "/#/goop/nononono" } "lulwat"]
      [:a {:href "/#/beans"} "goto bean"]
      [:a {:href "/#/goop "} "goto goop"]
      [:a {:href "/#/goop/zip123 "} "goto goop goop"]
-     [Button {:on-click #(println "i was clicked" (js/Math.random))} "HEELO"]
-     [Button {} "cool beans"]
-     [Button {} "multi" " children"]
-     (map #(identity [Button
+     [<>/Button {:on-click #(println "i was clicked" (js/Math.random))} "HEELO"]
+     [<>/Button {} "bad beans"]
+     [<>/Button {} "multi hey " " children"]
+     (map #(identity [<>/Button
                       {:key (str "wat" %)
                        :on-click (partial println "haha" %)}
                       (str "clickr # " %)])
           (range 0 10))
    ]))
-
 
 (defn render []
   (let [container (js/document.getElementById "app-container")]
@@ -354,3 +359,5 @@
   ((:tmp tmp-lucky-number-store) 2000 (js/Math.floor (* 100 (js/Math.random))))
   (render-app))
 
+
+(store-set-counter 5)
