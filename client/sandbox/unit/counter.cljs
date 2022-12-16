@@ -36,11 +36,13 @@
 
 (defonce counter-interval  (js/setInterval #(counter-inc-random) 5))
 
+
 (defn unit-counter []
   (let [counter @(reframe/subscribe [:counter])
-        do-dec #(reframe/dispatch [:set-counter  (- counter 1)])]
-    [:div {:class (css-counter-color (if (number? counter) counter 0))}
+        do-dec #(reframe/dispatch [:set-counter  (- counter 1)])
+        counter-hue (js/Math.floor (abs (mod counter 360)))]
+    [:div {:class (css-counter-color (if (number? counter-hue) counter-hue 0))}
      [<>/Button {:on-click #(counter-inc-random)} "increment"] 
      [<>/Button {:on-click #(do-dec)} "decriment"]
-     [:p "the counter: " counter]]))
-
+     [:p "rand counter: " counter]
+     [:p "hue: " counter-hue]]))

@@ -22,7 +22,12 @@
           {:target :browser
            :output-dir "public/js"
            :asset-path "/js"
+           :compiler-options
+             {:source-map true
+              :source-map-include-sources-content true
+              :source-map-detail-level :all}
            :modules {:sandbox {:init-fn sandbox.main/init }}
+           :source-map true
            :devtools {
                       :http-root "public"
                       :http-port 9999
