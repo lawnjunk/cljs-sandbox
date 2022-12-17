@@ -1,6 +1,7 @@
 (ns sandbox.main
   (:require
     ["uuid" :as uuid]
+    [sandbox.data.request-ctx :as request-ctx]
     [clojure.walk :refer [keywordize-keys]]
     [oops.core :refer [oget oset!]]
     [ajax.core :refer [POST]]
@@ -124,6 +125,7 @@
                    ((:set store-spinner) (get data :content "gooo"))
                    ((:set store-spinner) "THERE WAS AN ERROR"))))))
 
+
 (defn el-spinner-test []
   (let [request-id (reagent/atom (uuid/v4))]
     (fn []
@@ -182,7 +184,7 @@
      [:a {:href "/#/goop "} "goto goop"]
      [:a {:href "/#/goop/zip123 "} "goto goop goop"]
      [<>/Button {:on-click #(println "i was clicked" (js/Math.random))} "HEELO"]
-     [<>/Button {} "bad beans"]
+     [<>/Button {} "bad beans!!!"]
      [<>/Button {} "multi hey " " children"]
      (map #(identity [<>/Button
                       {:key (str "wat" %)

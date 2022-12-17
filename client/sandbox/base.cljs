@@ -4,7 +4,6 @@
     [sandbox.style :refer [color]]
     [sandbox.util :as util]))
 
-
 (defn- el-create-no-css
   [tag-name ]
   (fn [options & children]
@@ -20,7 +19,7 @@
   (fn [options & children]
     (util/vconcat [tag-name (merge {:class (style)} attribute options)] children)))
 
-(defn- el-create 
+(defn- el-create
   ([tag-name] (el-create-no-css tag-name))
   ([tag-name style] (el-create-with-css tag-name style))
   ([tag-name style attribute] (el-create-with-attribute tag-name style attribute)))

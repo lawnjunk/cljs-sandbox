@@ -1,23 +1,24 @@
 (ns sandbox.data.simple-store
-  (:require  
+  (:require
     [re-frame.core :as reframe]
     [clojure.string :as s]
     [sandbox.util :as util]))
-(defn reg-sub-simple-store-fetch
+
+(defn- reg-sub-simple-store-fetch
   [thing]
   (reframe/reg-sub
     thing
     (fn [db]
       (get db thing)))) ;; dispatch
 
-(defn reg-event-db-simple-store-set
+(defn- reg-event-db-simple-store-set
   [set-event thing]
   (reframe/reg-event-db
     set-event
     (fn [db [_ data]]
       (assoc db thing data))))
 
-(defn reg-event-db-simple-store-del
+(defn- reg-event-db-simple-store-del
   [del-event thing]
   (reframe/reg-event-db
     del-event

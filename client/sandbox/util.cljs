@@ -1,4 +1,10 @@
-(ns sandbox.util)
+(ns sandbox.util
+  (:require 
+    ["uuid" :as uuidlib]
+    [clojure.walk :refer [keywordize-keys]]))
+
+(def id uuidlib/v4)
+
 
 (defn wait [ms f]
   (js/setTimeout f ms))
@@ -14,8 +20,8 @@
       (logger "DBG" title ">>" stuff)
       stuff)))
 
-(def xxdp xxp)
-(def xxdl xxl)
+(def xxdp (dbg-create xxp))
+(def xxdl (dbg-create xxl))
 
 (defn vconcat
   [& args]
@@ -24,3 +30,9 @@
 (defn location-get []
   (let [hash js/window.location.hash]
     (if hash hash "")))
+
+(defn keywordify
+  [data]
+  (if (nil? data)
+    nil
+    (keywordize-keys data)))
