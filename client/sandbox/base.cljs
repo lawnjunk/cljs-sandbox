@@ -60,4 +60,9 @@
 (defclass css-clearfix []
   {:content ""
    :clear "both"})
+
 (def Clearfix (el-create :span css-clearfix))
+
+
+(defn Element [type option attribute & children]
+  )

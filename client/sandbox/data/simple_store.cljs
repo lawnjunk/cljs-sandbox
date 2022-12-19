@@ -44,12 +44,9 @@
                      (reframe/dispatch [thing-del-keyword]))
             thing-tmp (fn [delayInMS value]
                      (thing-set value)
-                     (util/wait delayInMS #(thing-del)))
-            thing-mod (fn [handler]
-                     (thing-set (handler (thing-get))))]
-        (if-not (nil? default) (thing-set default))
-      {:get thing-get
-       :set thing-set
-       :del thing-del
-       :mod thing-mod
-       :tmp thing-tmp}))))
+                     (util/wait delayInMS #(thing-del))) ] 
+        (if-not (nil? default) (thing-set default)) 
+        {:get thing-get 
+         :set thing-set 
+         :del thing-del 
+         :tmp thing-tmp}))))

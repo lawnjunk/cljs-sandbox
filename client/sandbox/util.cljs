@@ -3,8 +3,7 @@
     ["uuid" :as uuidlib]
     [clojure.walk :refer [keywordize-keys]]))
 
-(def id uuidlib/v4)
-
+(def genid uuidlib/v4)
 
 (defn wait [ms f]
   (js/setTimeout f ms))
@@ -32,7 +31,25 @@
     (if hash hash "")))
 
 (defn keywordify
+  "if data is collection apply clojure.walk/keywordize-keys"
   [data]
-  (if (nil? data)
-    nil
+  (if-not (coll? data)
+    data
     (keywordize-keys data)))
+
+(defn get-order [a b] 
+  (if (< a b) :less 
+    (if (> a b) :greater 
+      :equal)))
+
+
+(defn clamp-min [value vmin]
+  (if (< value vmin) vmin value))
+
+(defn clamp-max [value vmax]
+  (if (> value vmax) vmax value))
+
+(defn clamp [value vmin vmax]
+  (-> value
+      (clamp-min vmin)
+      (clamp-max vmax)))
