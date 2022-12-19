@@ -1,5 +1,6 @@
 (ns sandbox.base
   (:require
+    [reagent.core :as reagent]
     [spade.core :refer [defclass]]
     [sandbox.style :refer [color]]
     [sandbox.util :as util]))
@@ -63,6 +64,4 @@
 
 (def Clearfix (el-create :span css-clearfix))
 
-
-(defn Element [type option attribute & children]
-  )
+(def Element reagent/create-class)

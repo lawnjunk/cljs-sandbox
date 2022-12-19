@@ -1,9 +1,11 @@
 (ns sandbox.util
   (:require 
     ["uuid" :as uuidlib]
+    [reagent.core :as reagent]
     [clojure.walk :refer [keywordize-keys]]))
 
-(def genid uuidlib/v4)
+(def id-gen uuidlib/v4)
+(defn id-atom [] (reagent/atom (id-gen)))
 
 (defn wait [ms f]
   (js/setTimeout f ms))

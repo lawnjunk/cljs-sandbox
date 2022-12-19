@@ -70,5 +70,4 @@
                   :handler (partial handle-success request-id)
                   :error-handler (partial handle-error request-id)}))  
         ctx (request-ctx/create url request-id params ajax)] 
-    (js/console.log ajax)
     (request-ctx/put ctx)))

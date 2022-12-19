@@ -22,13 +22,16 @@
   (:require-macros
     [secretary.core :refer [defroute]]))
 
+; (reframe/reg-sub :all (fn [db] db))
+; (println  (reframe/subscribe[:all]))
+
+
 (defonce store-route (simple-store-create :route {:page "/" :args []}))
 (defonce store-spinner (simple-store-create :spinner-content "spinner-content-nothing"))
 
-
 (defn page-landing []
-  [:div 
-   [:h1  "this is a placehoder page" ]     
+  [:div
+   [:h1  "this is a placehoder page" ]
    ])
 
 (secretary/set-config! :prefix "#")

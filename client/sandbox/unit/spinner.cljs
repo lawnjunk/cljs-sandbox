@@ -1,32 +1,27 @@
 (ns sandbox.unit.spinner
   (:require
-    [reagent.core :as reagent]
+    ; [reagent.core :as reagent]
     [sandbox.data.request-ctx :as request-ctx]
-    [sandbox.http.request :refer [request]] 
+    [sandbox.http.spinner:refer :refer [http-spinner]] 
     [sandbox.base :as <>]
     [sandbox.util :as util]))
 
-(defn http-spinner [request-id]
-  (request
-    {:url "/api/spinner"
-     :request-id request-id
-     }))
-
 (defn unit-spinner []
-  (let [request-id (reagent/atom (util/genid))]
-    (http-spinner @request-id)
-    (reagent/create-class
-      {:component-will-unmount #(request-ctx/abort @request-id)
-       :reagent-render
+  (let [request-id (util/id-atom)]
+    (<>/Element
+      {:component-will-unmount #(request-ctx/abort-and-delete @request-id)
+       :component-did-mount #(http-spinner @request-id)
+       :render
          (fn []
            (let [req-ctx @(request-ctx/fetch @request-id)]
-             (println "req-ctx" req-ctx)
              [:div
               (if-not req-ctx
-                [:p "no req ctx found"]
+                [:div
+                 [<>/Button {:on-click #(http-spinner @request-id)} "request"]
+                 [:p "no req ctx found"]]
                 (let [pending (str (:pending req-ctx))
                       success (str (:is-success req-ctx))
-                      res-data (util/xxdp "res-data" (get req-ctx :res-data {}))
+                      res-data (get req-ctx :res-data {})
                       content (or (get res-data :content)
                                   (get-in req-ctx [:error :content]))
                       imageUrl (get res-data :imageUrl) ]
@@ -38,7 +33,7 @@
                    [:p "pending: " pending]
                    [:p "success: " success]
                    [:p "content: " content]
-                   (if imageUrl 
+                   (if imageUrl
                      [:img
                       {:src imageUrl
                        :alt content }])]))]))})))
