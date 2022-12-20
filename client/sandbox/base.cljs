@@ -2,7 +2,7 @@
   (:require
     [reagent.core :as reagent]
     [spade.core :refer [defclass]]
-    [sandbox.style :refer [color]]
+    [sandbox.style :refer [pallet]]
     [sandbox.util :as util]))
 
 (defn- el-create-no-css
@@ -26,9 +26,9 @@
   ([tag-name style attribute] (el-create-with-attribute tag-name style attribute)))
 
 (defclass css-container []
-  {:background (:container-bg @color)
-   :color (:container-fg @color)}
-  ["*" {:color (:container-fg @color)}])
+  {:background (:container-bg @pallet)
+   :color (:container-fg @pallet)}
+  ["*" {:color (:container-fg @pallet)}])
 
 (def Container (el-create :div css-container))
 (def Div (el-create  :div))
@@ -45,15 +45,15 @@
 (def A (el-create :a css-anchor))
 
 (defclass css-button []
-  {:background (:button-main @color)
+  {:background (:button-main @pallet)
    :color "#000"
    :padding "5px"
    :border "none"
    }
   [:&:hover :&:focus
-   {:background (:button-focus @color) }]
+   {:background (:button-focus @pallet) }]
   [:&:active
-   {:background (:button-active @color) }]) 
+   {:background (:button-active @pallet) }]) 
 (def Button (el-create :button css-button))
 (def Submit (el-create :input css-button {:type "submit"}))
 (def Goto (el-create :a css-button))

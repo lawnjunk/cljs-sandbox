@@ -55,7 +55,7 @@
    (:request-id) request-id
    (:timeout-in-ms) defalt 0 (none)"
   [options]
-  (let [request-id (get options :request-id (util/genid))
+  (let [request-id (get options :request-id (util/id-gen))
         url (str "http://localhost:7766" (get options :url))
         params (get options :req-data)
         timeout (util/clamp-min (get options :timeout-in-ms 0) 0)

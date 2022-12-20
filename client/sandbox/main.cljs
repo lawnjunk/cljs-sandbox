@@ -3,19 +3,19 @@
     ["uuid" :as uuid]
     [clojure.pprint :as pp]
     [clojure.walk :refer [keywordize-keys]]
-    [oops.core :refer [oget oset!]]
     [ajax.core :refer [POST]]
     [reagent.dom]
+    [garden.color :as color]
     [reagent.core :as reagent]
     [re-frame.core :as reframe]
     [secretary.core :as secretary]
-    [spade.core :refer [defclass]]
     [clojure.string :as s]
     [sandbox.base :as <>]
     [sandbox.util :as util]
     [sandbox.util :refer [xxl xxp xxdp]]
     [sandbox.page.storybook :refer [page-storybook]]
     [sandbox.unit.counter :refer [unit-counter]]
+    [sandbox.unit.header :refer [unit-header]]
     [sandbox.data.request-ctx :as request-ctxx]
     [sandbox.data.request-ctx :as request-ctx]
     [sandbox.data.simple-store :refer [simple-store-create]])
@@ -24,7 +24,6 @@
 
 ; (reframe/reg-sub :all (fn [db] db))
 ; (println  (reframe/subscribe[:all]))
-
 
 (defonce store-route (simple-store-create :route {:page "/" :args []}))
 (defonce store-spinner (simple-store-create :spinner-content "spinner-content-nothing"))
@@ -49,16 +48,11 @@
   (let [route @((:get store-route))]
     (println "route " route)
     [<>/Container { }
-    [:div
-     [:nav
-      [<>/Goto {:href "/#/" } "home"] 
-      [<>/Goto {:href "/#/storybook" } "storybook"]
-     ]]
+     [unit-header]
      (case (:page route)
        :storybook (util/vconcat [page-storybook] (:args route))
        [page-landing])
    ]))
-
 
 (defn render []
   (let [container (js/document.getElementById "sandbox-container")]

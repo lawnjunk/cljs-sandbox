@@ -2,7 +2,7 @@
   (:require
     ; [reagent.core :as reagent]
     [sandbox.data.request-ctx :as request-ctx]
-    [sandbox.http.spinner:refer :refer [http-spinner]] 
+    [sandbox.http.spinner :refer [http-spinner]] 
     [sandbox.base :as <>]
     [sandbox.util :as util]))
 

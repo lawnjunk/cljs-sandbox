@@ -1,34 +1,33 @@
 (ns sandbox.page.storybook
   (:require
     [spade.core :as spade]
-    [reagent.core :as reagent]
     [sandbox.unit.counter :refer [unit-counter]]
     [sandbox.unit.spinner-list :refer [unit-spinner-list]]
+    [sandbox.style :refer [pallet]]
     [sandbox.base :as <>]))
 
-(spade/defclass css-storybook []
+(spade/defclass css-storybook-left []
   {:background "red"
    :width "100%"
    :height "100%"
    }
-  [:.left-panel 
-   {:background "blue"
-    :width "10%"
-    :height "100vh"
-    :float :left}
-   [:h2 
-    {:color "yellow"
+  [:.panel
+   {:background (:storybook-panel @pallet) :float :left}
+   [:h2
+    {:color (:fg @pallet)
      :text-align "center"}]
    [:.story-nav
     {:display :flex
      :flex-direction :column
      :justify-content :vertical-align}]
-    [:a 
+    [:a
      {:width "100%"}]
    ]
-  [:.content 
-   {:background "orange"
+  [:.content
+   {
+    :background "blue"
     :width "90%"
+    :height "100vw"
     :float :left}])
 
 (def uri-page-storybook "/#/storybook")
@@ -56,8 +55,8 @@
 
 (defn page-storybook [story]
   (let [story (if story (keyword story))]
-    [:div {:class (css-storybook)}
-     [:section.left-panel
+    [:div {:class (css-storybook-left)}
+     [:section.panel
        [:h2 ":story:"]
       [:nav.story-nav
        [unit-storybook-nav-item "counter" (= story "counter")]

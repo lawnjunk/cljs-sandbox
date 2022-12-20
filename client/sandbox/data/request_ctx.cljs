@@ -16,7 +16,7 @@
 
 (defn create
   ([url]
-    (create url (util/genid) nil nil))
+    (create url (util/id-gen) nil nil))
   ([url request-id req-data ajax]
     {:request-id request-id
      :ajax ajax
