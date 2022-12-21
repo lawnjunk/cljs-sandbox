@@ -18,11 +18,12 @@
 
 ; TODO make a spinner list
 ; * number input controlls item count
+; TODO instead of using reagent/atom use a simple-store
 (defn unit-spinner-list [count]
   (let [count (reagent/atom (util/clamp (or count  0) 1 200))]
     (fn []
       [:div.spinner-list {:class (css-spinner-list)}
-       [:input 
+       [:input
         {:on-change (partial handle-input-change count)
          :type :number
          :min 1

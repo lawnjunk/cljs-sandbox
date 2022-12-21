@@ -4,7 +4,8 @@
     [sandbox.unit.counter :refer [unit-counter]]
     [sandbox.unit.spinner-list :refer [unit-spinner-list]]
     [sandbox.style :refer [pallet]]
-    [sandbox.base :as <>]))
+    [sandbox.base :as <>])
+  )
 
 (spade/defclass css-storybook-left []
   {:background "red"
@@ -53,7 +54,7 @@
 (defn story-404 []
   [:div [:h1 "select a story"]])
 
-(defn page-storybook [story]
+(defn page-storybook [query story]
   (let [story (if story (keyword story))]
     [:div {:class (css-storybook-left)}
      [:section.panel

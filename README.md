@@ -32,4 +32,5 @@ a tiny cljs re-frame demo app.
 * [cljs-ajax - http requests](https://github.com/JulianBirch/cljs-ajax)
 * [garden - css in cljs](https://github.com/noprompt/garden)
 * [spade - a css in cljs garden util](https://github.com/dhleong/spade)
+* [oops - cljs macros for working with js objects](https://github.com/binaryage/cljs-oops)
 * [`goog` closuer-library - googles common js library](https://github.com/google/closure-librarye)

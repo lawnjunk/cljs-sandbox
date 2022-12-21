@@ -31,10 +31,10 @@
 ; TODO make .seleced appear if route matches window location
 (defn unit-header-nav []
   [:div {:class (css-header-nav)} 
-    [:nav 
+    [:nav
      [:a.selected {:href "/#/"} "home"]
-     [:a {:href "/#/storybook"} "storybook"]
-     [:a {:href "/#/storybook/counter"} "counter"]
+     [:a {:href "/#/storybook?zoo=cool"} "storybook"]
+     [:a {:href "/#/storybook/counter?coo=beans"} "counter"]
      ]])
 
 (spade/defclass css-header []

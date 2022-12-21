@@ -18,39 +18,46 @@
     [sandbox.unit.header :refer [unit-header]]
     [sandbox.data.request-ctx :as request-ctxx]
     [sandbox.data.request-ctx :as request-ctx]
-    [sandbox.data.simple-store :refer [simple-store-create]])
+    [sandbox.data.route :as route]
+    [oops.core :as oops]
+    [goog.events])
   (:require-macros
-    [secretary.core :refer [defroute]]))
+    [secretary.core :refer [defroute]])
+  (:import
+    goog.History
+    goog.History.EventType))
 
 ; (reframe/reg-sub :all (fn [db] db))
 ; (println  (reframe/subscribe[:all]))
-
-(defonce store-route (simple-store-create :route {:page "/" :args []}))
-(defonce store-spinner (simple-store-create :spinner-content "spinner-content-nothing"))
 
 (defn page-landing []
   [:div
    [:h1  "this is a placehoder page" ]
    ])
 
-(secretary/set-config! :prefix "#")
 
-(defroute route-page-storybook "/storybook" [_ query]
-  ((:set store-route) {:page :storybook :args [nil query]}))
+;TODO create a way to detect if an element is in the viewport or not
+; and create hooks didEnterViewport didLeaveViewport
+; and maby allow for triggers above and below (500px up and down)
+; and create hook couldEnterViewport (near viewport up or down)
 
-(defroute route-page-storybook-selected "/storybook/:id" [id query]
-  ((:set store-route) {:page :storybook :args [id query]}))
+(defroute route-page-storybook "/storybook" [query-params]
+  (route/goto :storybook query-params nil))
 
-(defroute route-landing "*" []
-  ((:set store-route) {:page :landing :args []}))
+(defroute route-page-storybook-selected "/storybook/:id" [id query-params]
+  (println "googooogoo" id query-params )
+  (route/goto :storybook query-params id))
+
+(defroute route-landing "*" [query-params]
+  (route/goto :landing query-params nil))
 
 (defn app []
-  (let [route @((:get store-route))]
+  (let [route @(route/fetch)]
     (println "route " route)
     [<>/Container { }
      [unit-header]
      (case (:page route)
-       :storybook (util/vconcat [page-storybook] (:args route))
+       :storybook [page-storybook (:query route) (:id route)]
        [page-landing])
    ]))
 
@@ -67,14 +74,16 @@
   (render))
 
 (defn init []
-  (secretary/dispatch! (util/location-get))
-  (js/window.addEventListener "hashchange" #(secretary/dispatch! (util/location-get)))
   (xxl "init ")
+  ; if window.location is not using a hashroute force it to use a hash
+  (let [hashroute-load (.-hash js/window.location)
+        pathname (.-pathname js/window.location)
+        hashroute (str "/#" pathname)]
+    (if (= "" hashroute-load)
+      (oops/oset! js/window ".location" hashroute)))
+  (secretary/set-config! :prefix "#")
+  (secretary/dispatch! (util/location-get))
+  (js/window.addEventListener "hashchange" #(secretary/dispatch! (str (util/location-get))))
   (reframe/dispatch [:set-counter -666])
   (render-app))
 
-     ; (map #(identity [<>/Button
-     ;                  {:key (str "wat" %)
-     ;                   :on-click (partial println "haha" %)}
-     ;                  (str "clickr # " %)])
-     ;      (range 0 10))
