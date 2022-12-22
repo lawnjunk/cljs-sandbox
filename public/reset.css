@@ -3,8 +3,14 @@
   src: url("/RobotoMono.ttf");
 }
 
+@font-face {
+  font-family: "Airstrike";
+  src: url("/airstrike.ttf");
+}
+
 html {
   font-size: 100%;
+      :border :none
 }
 
 *,
@@ -27,6 +33,6 @@ input:focus,
 select:focus,
 textarea:focus {
   box-shadow: none;
-  outline: #000 dotted 2px;
+  outline: green dotted 2px;
   outline-offset: .05em;
 }

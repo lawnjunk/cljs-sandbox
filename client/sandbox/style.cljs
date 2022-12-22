@@ -8,6 +8,7 @@
     [sandbox.util :as util]))
 
 (def size-px-header-height (units/px 40))
+(def size-px-main-height (util/css-calc :100vh :- size-px-header-height))
 
 (def breakpoint
   {:mobile 600
@@ -23,8 +24,10 @@
    :button-active "#979b85"
    :button-selected-bg "#62635d"
    :button-selected-fg "#B9C09E"
-   :storybook-panel "#6c8468"
+   :storybook-panel "#74b287"
+   :storybook-nav-unselected "#4da568"
+   :storybook-nav-selected "#c0db97"
    :pending-1 "#3a6f72"
    :pending-2 "#6c9684"
-   :header-bg "#97ad93"
+   :header-bg "#68cc86"
    }))
