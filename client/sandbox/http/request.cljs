@@ -48,7 +48,6 @@
       (request-ctx/update-success request-id res-data error)
       (request-ctx/update-error request-id res-data error))))
 
-; TODO make it so that it will allow req-data to be nil
 (defn request
   ":url api endpoint
    (:req-data) to send as json

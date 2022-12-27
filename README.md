@@ -1,16 +1,38 @@
-# cljs-sandbox 
-a tiny cljs re-frame demo app.
+# cljs-sandbox
+> a nice lil re-frame example repo.
+
+# TODO
+* create a :qdb effect that uses the query string as a datastore
+* create a :ldb effect that uses localstorge as a datastore
+* ?create a :api effect that makes api requests and manages follow-up :fx
+* create a component that demonstrates how to work with forms
+
+# about
+* so what is in the dirs?
+    * unit - ui components (micro ui)
+    * page - ui pages full of components (macro ui)
+    * data - re-frame-fx for storing and fetching data
+    * http - re-frame-fx for making api requests
+    * side - re-frame-intercepors for managing custom side effects
+* custom re-fame effects
+    * :ldb -> a localstorge backed database for storing persistent data (like :db)
+        * great for caching credentials and preferences
+    * :qdb -> a query-string backed database for storing view-state data (like :db)
+        * great for storing view-state
+    * :api -> used to make api requests
+* data
+    * request-ctx - used to track metadata about a single api request
+    * request-metrix - used to track metadata about all api requests
 
 ## learning goals
-* css in cljs
-* view-state managment using query strings
-  * aka urls are UI source for most truth
-* app-state managment with reframe
-  * local-storage support
-* dark and light theme
-* ajax requests to node server
-* form and inputs usage
-* page/routing/with/:params
+- [x] page routing with params using secretary
+- [x] style the components with garden/spade
+- [ ] write components with inputs and forms
+- [x] make ajax requests with cljs-ajax
+- [x] manage application data with re-frame's app-db
+- [ ] manage side effects using custom re-frame intercepors
+- [ ] manage view-state with query strings
+- [ ] manage persistent state with localstorge
 
 ## development
 * start the api server `npm run api:start`
