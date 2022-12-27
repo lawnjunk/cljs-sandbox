@@ -6,6 +6,7 @@
     [sandbox.unit.spinner-list :refer [unit-spinner-list]]
     [sandbox.style :as style]
     [sandbox.style :refer [pallet]]
+    [sandbox.util :as util]
     [sandbox.base :as <>])
   )
 
@@ -48,8 +49,7 @@
         {:background (color/lighten (:storybook-nav-selected @pallet) 10)}]
        [:&:active
         {:background (color/lighten (:storybook-nav-selected @pallet) 15)}]
-      ]]
-   ]
+      ]]]
   [:.content
    {:background (:bg @pallet)
     :padding :2em
@@ -57,14 +57,14 @@
     :height (or style/size-px-main-height :100vw) 
     :float :left}])
 
-(def uri-page-storybook "/#/storybook")
+(def uri-page-storybook "/storybook")
 
 (defn unit-storybook-nav-item [item-name selected] 
   (let [href (str uri-page-storybook "/" item-name)] 
-    [:a.nav-item 
-     {:href href 
-      :alt (str "show story: " item-name) 
-      :class (when selected "selected")}
+    [<>/Hpush
+     {:href href
+      :alt (str "show story: " item-name)
+      :class (util/css-class "nav-item" {:selected selected})}
      "> " item-name ]))
 
 ; TODO store.params.pagename ur somthing auto mod querystring
@@ -82,8 +82,8 @@
 
 (defn page-storybook [param]
   (let [query (:query param)
-        story (:id param)
-        story (if story (keyword story))]
+        story (keyword (get param :id :none))]
+    (println "storybook" query)
     [:div {:class (css-storybook-left)}
      [:section.panel
        [:h2 ":story:"]

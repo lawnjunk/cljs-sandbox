@@ -2,7 +2,7 @@
   (:require
     [re-frame.core :as reframe]))
 
-(def route-default 
+(def route-default
   {:page :landing :id nil :query {}})
 
 (reframe/reg-event-db

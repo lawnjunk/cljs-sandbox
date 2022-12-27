@@ -1,20 +1,15 @@
 (ns sandbox.util
   (:require 
-    ["uuid" :as uuidlib]
-    [reagent.core :as reagent]
-    [garden.units :as units]
-    [clojure.string :as s]
-    [clojure.walk :refer [keywordize-keys]]))
+     ["uuid" :as uuidlib]
+     [reagent.core :as reagent]
+     [garden.units :as units]
+     [clojure.string :as s]
+     [clojure.walk :refer [keywordize-keys]] 
+     [oops.core :as oops]
+     [goog.functions :as goof])
+  (:import goog.Uri.QueryData))
 
-(def id-gen uuidlib/v4)
-(defn id-atom [] (reagent/atom (id-gen)))
-
-(defn wait [ms f]
-  (js/setTimeout f ms))
-
-(def xxl js/console.log)
-(def xxp println)
-(defn- dbg-create [logger]
+(defn- xxd-create [logger]
   (fn dbg
     ([stuff]
       (logger "DBG: " stuff)
@@ -23,16 +18,51 @@
       (logger "DBG" title ">>" stuff)
       stuff)))
 
-(def xxdp (dbg-create xxp))
-(def xxdl (dbg-create xxl))
+(def xxl js/console.log)
+(def xxp println)
+(def xxdp (xxd-create xxp))
+(def xxdl (xxd-create xxl))
+
+(defn partial-right
+  [f & partial-args]
+  (fn [& args]
+    (apply f (concat args partial-args))))
+
+(defn debounce
+  [ms f]
+  (goof/debounce f ms))
+
+(defn throttle
+  [ms f]
+  (goof/throttle f ms))
+
+(defn once
+  [f]
+  (goof/once f))
+
+(defn wait
+  "wate ms delay then run f
+   returns a cancel fn
+
+   (wait 200 handler)
+
+   (let [cancel (wait 200 handler)]
+     ...
+     (cancel))"
+  [ms f ]
+  (let [timeout-id (js/setTimeout f ms)]
+    (println "wait-start" timeout-id)
+    (fn []
+      (println "wait-cancel" timeout-id)
+      (js/clearTimeout timeout-id))))
+
+(def id-gen uuidlib/v4)
+(defn id-atom [] (reagent/atom (id-gen)))
 
 (defn vconcat
   [& args]
   (into [] (apply concat args)))
 
-(defn location-get []
-  (let [hash js/window.location.hash]
-    (if hash hash "")))
 
 (defn clamp-min [value vmin]
   (if (< value vmin) vmin value))
@@ -54,7 +84,6 @@
 
 (defn keyword->string
   "convert a :keyword into a string without \":\"
-
   (keyword->string :cool) => \"cool\" "
   [value]
   (s/replace (str value) ":" ""))
@@ -76,19 +105,32 @@
   ([& args]
    (str "calc(" (s/join " " (map unit->string args)) ")"))) 
 
+(defn css-class
+  "return css class string for truthy
 
+  (css-class {:hidden false :selected true :error true})
+  \"selected error\"
 
-(defn px-val 
+  (css-class \"app-container\" {:theme-dark true :theme-light false})
+  \"app-container theme-dark\"
+  "
+  ([data] (css-class "" data))
+  ([original-class-name data]
+    (->> data
+        (filter #(second %))
+        (map #(keyword->string (first %)))
+        ((partial-right conj original-class-name))
+        (s/join " ")
+        (s/trim))))
+
+(defn px-val
   [val]
   (if (number? val) val (:magnitude val)))
 
 (defn px-div
   [a b]
   (units/px (/ (px-val a) (px-val b))))
-
 (def px-sub units/px-)
 (def px-sum units/px+)
 (def px-mul units/px+)
-
-
 

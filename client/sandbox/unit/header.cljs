@@ -1,14 +1,12 @@
 (ns sandbox.unit.header
   (:require
     [spade.core :as spade]
-    [sandbox.data.request-metrix :as rmetrix]
     [garden.units :as units]
     [sandbox.util :as util]
-    [sandbox.style :as style]
     [sandbox.base :as <>]
+    [sandbox.style :as style]
+    [sandbox.data.request-metrix :as rmetrix]
     [sandbox.unit.header-request-pending-icon :refer [unit-header-request-pending-icon]]))
-
-; TODO make header fixed (top) and app container fixed below
 
 ; TODO add media queries
 (spade/defclass css-header-nav []
@@ -32,9 +30,9 @@
 (defn unit-header-nav []
   [:div {:class (css-header-nav)} 
     [:nav
-     [:a.selected {:href "/#/"} "home"]
-     [:a {:href "/#/storybook?zoo=cool"} "storybook"]
-     [:a {:href "/#/storybook/counter?coo=beans"} "counter"]
+     [<>/Hpush {:href "/"} "home"]
+     [<>/Hpush {:href "/storybook"} "storybook"]
+     [<>/Hpush {:href "/storybook/counter"} "counter"]
      ]])
 
 (spade/defclass css-header []

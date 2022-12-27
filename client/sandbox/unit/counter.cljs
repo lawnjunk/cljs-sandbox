@@ -1,7 +1,9 @@
 (ns sandbox.unit.counter
-  (:require 
+  (:require
     [spade.core :refer [defclass]]
     [re-frame.core :as reframe]
+    [sandbox.data.query :as query]
+    [sandbox.util :as util]
     [sandbox.base :as <>]))
 
 ; TODO siik counter mods
@@ -9,7 +11,7 @@
 ; * auto speed control
 ; * increment control
 ; * if-not is-auto? maunal up/down
-; * counter-inc should use a 
+; * counter-inc should use a
 ; * saturation/light controll
 
 (reframe/reg-sub
@@ -28,7 +30,7 @@
 
 (defn counter-inc-random
   []
-  (reframe/dispatch 
+  (reframe/dispatch
     [:inc-counter (js/Math.random)]))
 
 (defclass css-counter-color [num]
@@ -36,13 +38,12 @@
 
 (defonce counter-interval  (js/setInterval #(counter-inc-random) 5))
 
-
 (defn unit-counter []
   (let [counter @(reframe/subscribe [:counter])
         do-dec #(reframe/dispatch [:set-counter  (- counter 1)])
         counter-hue (js/Math.floor (abs (mod counter 360)))]
     [:div {:class (css-counter-color (if (number? counter-hue) counter-hue 0))}
      [<>/Button {:on-click #(counter-inc-random)} "increment"] 
-     [<>/Button {:on-click #(do-dec)} "decriment"]
+     [<>/Button {:on-click #(query/write-data! {:name (util/id-gen)})} "decriment"]
      [:p "rand counter: " counter]
      [:p "hue: " counter-hue]]))

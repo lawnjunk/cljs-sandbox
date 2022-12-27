@@ -27,7 +27,7 @@
 
 (reframe/reg-event-db
   :request-metrix-request-success
-  (fn [db] 
+  (fn [db]
     (let [success (get-in db [:request-metrix :success] 0)
           pending (get-in db [:request-metrix :pending] 0)]
       (-> db
@@ -68,3 +68,7 @@
 (defn fetch
   []
   (reframe/subscribe [:request-metrix-fetch]))
+
+; spec (valid qs data
+; get set
+

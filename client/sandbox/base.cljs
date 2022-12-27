@@ -1,8 +1,10 @@
 (ns sandbox.base
   (:require
     [reagent.core :as reagent]
+    [secretary.core :as secretary]
     [spade.core :refer [defclass]]
     [sandbox.style :refer [pallet]]
+    [sandbox.location :as location]
     [sandbox.util :as util]))
 
 (defn- el-create-no-css
@@ -42,8 +44,6 @@
 (defclass css-anchor []
   {:text-decoration "underlined"})
 
-(def A (el-create :a css-anchor))
-
 (defclass css-button []
   {:background (:button-main @pallet)
    :color "#000"
@@ -54,9 +54,29 @@
    {:background (:button-focus @pallet) }]
   [:&:active
    {:background (:button-active @pallet) }]) 
+
 (def Button (el-create :button css-button))
 (def Submit (el-create :input css-button {:type "submit"}))
-(def Goto (el-create :a css-button))
+
+(defn Hpush[opts & children]
+  (let [href (:href opts)]
+    (util/vconcat [:a (merge opts {:on-click 
+         (fn [e]
+           (.preventDefault e)
+           (location/replace-pathname! href)
+           (secretary/dispatch! (location/fetch-route))
+           )})]
+            children)))
+
+(defn Hreplace[opts & children]
+  (let [href (:href opts)]
+    (util/vconcat [:a (merge opts {:on-click 
+         (fn [e]
+           (.preventDefault e)
+           (location/replace-pathname! href)
+           (secretary/dispatch! (location/fetch-route))
+           )})]
+            children)))
 
 (defclass css-clearfix []
   {:content ""
