@@ -1,3 +1,4 @@
+const {faker} = require('@faker-js/faker')
 const uuid = require('uuid')
 const cors = require('cors')
 const express = require('express')
@@ -79,6 +80,16 @@ app.use((req, res, next) => {
   next()
 })
 
+app.post('/api/spinner', async (req, res) => {
+  let delayInMS = req.body.delayInMS || Math.floor(Math.random() * 2000) + 200
+  await sleep(delayInMS)
+  res.json({
+    content: faker.lorem.words(3),
+    imageUrl: "https://picsum.photos/200/200.jpg?grayscale&rand=" + 
+    faker.datatype.hexadecimal({length: 5}),
+  })
+})
+
 app.post('/api/debug', async (req, res) => {
   let {delayInMS, status, payload} = req.body
   console.dir(req.body)
@@ -87,11 +98,12 @@ app.post('/api/debug', async (req, res) => {
   console.log({delayInMS, status, payload})
   await sleep(delayInMS)
 
-  if (payload.content) {
-    payload.content = payload.content.toUpperCase() + `!!`
-  }
   if (payload) {
-    res.status(status).json({
+    console.log("sending payload")
+    if (payload?.content) {
+      payload.content = payload.content.toUpperCase() + `!!`
+    }
+    return res.status(status).json({
       ...payload,
       luckNumber: Math.random(),
       example: {

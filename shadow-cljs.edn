@@ -3,29 +3,23 @@
  :nrepl {:port 7777}
  :dependencies
  [[reagent                   "1.1.0"]
+  [re-frame              "1.3.0-rc3"]
   [garden                   "1.3.10"]
   [binaryage/oops            "0.7.2"]
-  [goog-jar                  "1.0.0"]
-  [re-frame              "1.3.0-rc3"]
+  [net.dhleong/spade         "1.1.1"]
   [cljs-ajax                 "0.8.4"]
   [clj-commons/secretary     "1.2.4"]
-  [net.dhleong/spade         "1.1.1"]
-  [net.cgrand/macrovich      "0.2.1"]
-  [org.clojure/tools.logging "1.2.4"]
   [day8/shadow-git-inject    "0.0.5"]]
-
-
  :build-defaults {:build-hooks [(shadow-git-inject.core/hook)]}
-
- :builds {
-          :app
+ :builds {:app
           {:target :browser
            :output-dir "public/js"
            :asset-path "/js"
-           :modules {:sandbox {:init-fn sandbox.main/init }}
-           :devtools {
-                      :http-root "public"
+           :compiler-options
+             {:source-map true
+              :source-map-include-sources-content true
+              :source-map-detail-level :all}
+           :modules {:sandbox {:init-fn sandbox.main/init}}
+           :devtools {:http-root "public"
                       :http-port 9999
-                      :http-use-index-files true
-           }
-           }}}
+                      :http-use-index-files true}}}}

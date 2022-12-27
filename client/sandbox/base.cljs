@@ -1,9 +1,11 @@
 (ns sandbox.base
   (:require
+    [reagent.core :as reagent]
+    [secretary.core :as secretary]
     [spade.core :refer [defclass]]
-    [sandbox.style :refer [color]]
+    [sandbox.style :refer [pallet]]
+    [sandbox.location :as location]
     [sandbox.util :as util]))
-
 
 (defn- el-create-no-css
   [tag-name ]
@@ -20,15 +22,15 @@
   (fn [options & children]
     (util/vconcat [tag-name (merge {:class (style)} attribute options)] children)))
 
-(defn- el-create 
+(defn- el-create
   ([tag-name] (el-create-no-css tag-name))
   ([tag-name style] (el-create-with-css tag-name style))
   ([tag-name style attribute] (el-create-with-attribute tag-name style attribute)))
 
 (defclass css-container []
-  {:background (:container-bg @color)
-   :color (:container-fg @color)}
-  ["*" {:color (:container-fg @color)}])
+  {:background (:container-bg @pallet)
+   :color (:container-fg @pallet)}
+  ["*" {:color (:container-fg @pallet)}])
 
 (def Container (el-create :div css-container))
 (def Div (el-create  :div))
@@ -42,23 +44,44 @@
 (defclass css-anchor []
   {:text-decoration "underlined"})
 
-(def A (el-create :a css-anchor))
-
 (defclass css-button []
-  {:background (:button-main @color)
+  {:background (:button-main @pallet)
    :color "#000"
    :padding "5px"
    :border "none"
    }
   [:&:hover :&:focus
-   {:background (:button-focus @color) }]
+   {:background (:button-focus @pallet) }]
   [:&:active
-   {:background (:button-active @color) }]) 
+   {:background (:button-active @pallet) }]) 
+
 (def Button (el-create :button css-button))
 (def Submit (el-create :input css-button {:type "submit"}))
-(def Goto (el-create :a css-button))
+
+(defn Hpush[opts & children]
+  (let [href (:href opts)]
+    (util/vconcat [:a (merge opts {:on-click 
+         (fn [e]
+           (.preventDefault e)
+           (location/replace-pathname! href)
+           (secretary/dispatch! (location/fetch-route))
+           )})]
+            children)))
+
+(defn Hreplace[opts & children]
+  (let [href (:href opts)]
+    (util/vconcat [:a (merge opts {:on-click 
+         (fn [e]
+           (.preventDefault e)
+           (location/replace-pathname! href)
+           (secretary/dispatch! (location/fetch-route))
+           )})]
+            children)))
 
 (defclass css-clearfix []
   {:content ""
    :clear "both"})
+
 (def Clearfix (el-create :span css-clearfix))
+
+(def Element reagent/create-class)
