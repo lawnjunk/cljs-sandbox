@@ -23,7 +23,6 @@
 
 (defn unit-page-router [] ()
   (let [route @(route/fetch)]
-    (println :route route)
     [:div.page-router {:class (css-unit-page-router)}
       (case (:page route)
         :storybook [page-storybook route]

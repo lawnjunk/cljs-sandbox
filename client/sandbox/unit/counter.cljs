@@ -3,7 +3,7 @@
     [reagent.core :as reagent]
     [spade.core :refer [defclass]]
     [re-frame.core :as reframe]
-    [sandbox.data.qdb :as qdb]
+    [sandbox.side.qdb :as qdb]
     [sandbox.util :as util]
     [sandbox.base :as <>]))
 

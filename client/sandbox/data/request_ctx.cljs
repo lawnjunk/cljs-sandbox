@@ -16,8 +16,8 @@
 
 (defn create
   ([url]
-    (create url (util/id-gen) nil nil))
-  ([url request-id req-data ajax]
+    (create url (util/id-gen) nil nil nil nil nil))
+  ([url request-id req-data ajax fx dispatch header]
     {:request-id request-id
      :ajax ajax
      :url url
@@ -25,6 +25,9 @@
      :req-data req-data
      :res-data nil
      :error nil
+     :fx fx
+     :dispatch dispatch
+     :header header
      :is-success nil}))
 
 (defn- db-get-request-ctx-stash [db]
@@ -75,6 +78,13 @@
   (reframe/dispatch
     [:request-ctx-put request-ctx]))
 
+(defn- create-finished-fx
+  [request-ctx fx]
+  (let [extra-dispatch (get  request-ctx :dispatch)
+        extra-fx-a (when extra-dispatch [[:dispatch (conj extra-dispatch request-ctx)]])
+        extra-fx-b (get request-ctx :fx)]
+    (util/vconcat fx extra-fx-a extra-fx-b)))
+
 ; TODO -> update db :request-count
 (reframe/reg-event-fx
   :request-ctx-update-success
@@ -82,16 +92,17 @@
        (let [db (:db cofx)
              request-ctx-stash (db-get-request-ctx-stash db)
              request-ctx (get request-ctx-stash request-id)]
-         (if request-ctx
-           {:dispatch [:request-metrix-request-success]
-            :db (let [request-ctx (-> request-ctx
-                     (assoc :pending false)
-                     (assoc :is-success true)
-                     (assoc :error error)
-                     (assoc :res-data res-data))] 
-                  (->> request-ctx 
+         (when request-ctx 
+           (let [request-ctx (-> request-ctx
+                                 (assoc :pending false)
+                                 (assoc :is-success true)
+                                 (assoc :error error)
+                                 (assoc :res-data res-data))
+                 fx (create-finished-fx request-ctx [[:dispatch [:request-metrix-request-success]]])]  
+             {:fx fx
+              :db (->> request-ctx
                        (assoc request-ctx-stash request-id) 
-                       (assoc db :request-ctx-stash)))}))))
+                       (assoc db :request-ctx-stash))})))))
 
 (defn update-success
   ([request-id res-data]
@@ -107,16 +118,18 @@
        (let [db (:db cofx)
              request-ctx-stash (get db :request-ctx-stash {})
              request-ctx (get request-ctx-stash request-id)]
-         (if request-ctx
-           {:dispatch [:request-metrix-request-error]
-            :db (let [request-ctx (-> request-ctx
+         (when request-ctx
+           (let [request-ctx
+                 (-> request-ctx
                      (assoc :pending false)
                      (assoc :is-success false )
                      (assoc :error error)
-                     (assoc :res-data res-data))] 
-                  (->> request-ctx 
-                       (assoc request-ctx-stash request-id) 
-                       (assoc db :request-ctx-stash)))}))))
+                     (assoc :res-data res-data))
+                 fx (create-finished-fx request-ctx [[:dispatch [:request-metrix-request-error]]])]
+                  {:fx fx
+                   :db  (->> request-ctx
+                             (assoc request-ctx-stash request-id)
+                             (assoc db :request-ctx-stash))})))))
 
 (defn update-error
  "update a request-ctx in request-ctx-stash after error"
@@ -133,5 +146,5 @@
 (defn fetch
   "fetch a request-ctx from request-ctx-stash (nil if not found)"
   [request-id]
-  (reframe/subscribe 
+  (reframe/subscribe
     [:request-ctx-fetch request-id] ))

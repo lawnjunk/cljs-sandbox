@@ -21,6 +21,8 @@
               :source-map-include-sources-content true
               :source-map-detail-level :all}
            :modules {:sandbox {:init-fn sandbox.main/init}}
-           :devtools {:http-root "public"
+           :dev-http {9000 "public"}
+           :devtools {:repl-pprint false
+                      :http-root "public"
                       :http-port 9999
-                      :http-use-index-files true}}}}
+                      :http-use-index-files false}}}}

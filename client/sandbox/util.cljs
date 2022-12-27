@@ -6,6 +6,7 @@
      [clojure.string :as s]
      [clojure.walk :refer [keywordize-keys]] 
      [oops.core :as oops]
+     [clojure.pprint :as pprint]
      [goog.functions :as goof])
   (:import goog.Uri.QueryData))
 
@@ -17,6 +18,7 @@
     ([title stuff]
       (logger "DBG" title ">>" stuff)
       stuff)))
+
 
 (def xxl js/console.log)
 (def xxp println)
@@ -41,7 +43,7 @@
   (goof/once f))
 
 (defn wait
-  "wate ms delay then run f
+  "wate ms wait then run f
    returns a cancel fn
 
    (wait 200 handler)
@@ -51,13 +53,13 @@
      (cancel))"
   [ms f ]
   (let [timeout-id (js/setTimeout f ms)]
-    (println "wait-start" timeout-id)
+    (comment println "wait-start" timeout-id)
     (fn []
-      (println "wait-cancel" timeout-id)
+      (comment println "wait-cancel" timeout-id)
       (js/clearTimeout timeout-id))))
 
-(defn interval 
-  "wate ms delay then run f and repeat
+(defn interval
+  "wate ms wait then run f and repeat
    returns a cancel fn
 
    (wait 200 handler)
@@ -67,9 +69,9 @@
      (cancel))"
    [ms f]
   (let [interval-id (js/setInterval f ms)]
-    (println "interval-start" interval-id)
+    (comment println "interval-start" interval-id)
     (fn []
-      (println "interval-cancel" interval-id)
+      (comment println "interval-cancel" interval-id)
       (js/clearInterval interval-id))))
 
 (def id-gen uuidlib/v4)

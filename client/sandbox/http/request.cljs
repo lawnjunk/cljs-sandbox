@@ -35,7 +35,6 @@
   (let [res-data response]
     (request-ctx/update-success request-id res-data)))
 
-
 (defn- handle-error
   [request-id response]
   (let [status (get response :status 999)
@@ -48,25 +47,37 @@
       (request-ctx/update-success request-id res-data error)
       (request-ctx/update-error request-id res-data error))))
 
+; (defn handle-progress [e]
+;   (util/xxl e)
+;   (println (str "Progress (" (.-loaded e) "/" (.-total e) ")")))
+
+; TODO suport :form-data https://github.com/JulianBirch/cljs-ajax#getpost-examples
 (defn request
   ":url api endpoint
+   (:fx) [[:dispatch [:debug :some-tag]] ] (request-ctx will NOT be conjed)
+   (:dispatch) [:debug :some-tag] (request-ctx will be conjed)
    (:req-data) to send as json
+   (:header) header map
    (:request-id) request-id
    (:timeout-in-ms) defalt 0 (none)"
   [options]
   (let [request-id (get options :request-id (util/id-gen))
-        url (str "http://localhost:7766" (get options :url))
+        url (str "" (get options :url))
+        header (get options :header)
+        fx (get options :fx)
+        dispatch (get options :dispatch)
         params (get options :req-data)
         timeout (util/clamp-min (get options :timeout-in-ms 0) 0)
         format-options (if-not  params {} {:format :json :params params}) 
-        ajax (POST 
-               url 
-               (merge  
+        ajax (POST
+               url
+               (merge
                  format-options
                  {:response-format :json
                   :keywords? true
                   :timeout timeout
                   :handler (partial handle-success request-id)
-                  :error-handler (partial handle-error request-id)}))  
-        ctx (request-ctx/create url request-id params ajax)] 
+                  ; :progress-handler handle-progress
+                  :error-handler (partial handle-error request-id)}))
+        ctx (request-ctx/create url request-id params ajax fx dispatch header)]
     (request-ctx/put ctx)))
