@@ -7,7 +7,7 @@
     [sandbox.location :as location]
     [sandbox.unit.page-router :refer [unit-page-router]]
     [sandbox.unit.header :refer [unit-header]]
-    [sandbox.data.query :as query]
+    [sandbox.data.qdb :as qdb]
     [oops.core :as oops]
     [goog.events :as events])
   (:import 
@@ -22,13 +22,11 @@
 ; and maby allow for triggers above and below (500px up and down)
 ; and create hook couldEnterViewport (near viewport up or down)
 (defn app []
-  (let [query @(query/fetch)]
-    (println "query" query)
-    [:class.sandbox-container
+  (let [qdb @(qdb/fetch)]
+    (println "qdb" qdb)
+    [:div.sandbox-container
      [unit-header]
-     [unit-page-router]
-     [:p :hello (.random js/Math)]
-     ]))
+     [unit-page-router]]))
 
 (defn render []
   (println "main/render")
@@ -53,10 +51,9 @@
   (util/xxl "main/init ")
 
   (-> (location/fetch-map-from-query)
-      (query/write-data!))
+      (qdb/overwrite!))
   (secretary/dispatch! (location/fetch-route))
   (.addEventListener js/window "popstate"
     (fn [] (secretary/dispatch! (location/fetch-route))))
-  (reframe/dispatch [:set-counter -666])
   (after-load))
 

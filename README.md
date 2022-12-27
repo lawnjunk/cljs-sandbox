@@ -27,7 +27,7 @@
 ## learning goals
 - [x] page routing with params using secretary
 - [x] style the components with garden/spade
-- [ ] write components with inputs and forms
+- [ ] write components with inputs and forms 
 - [x] make ajax requests with cljs-ajax
 - [x] manage application data with re-frame's app-db
 - [ ] manage side effects using custom re-frame intercepors

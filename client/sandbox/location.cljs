@@ -126,10 +126,12 @@
   (let [is-keyword (s/starts-with? value ":")
         value-as-keyword (keyword (s/replace value ":" ""))
         value-as-number (.valueOf (js/Number. value))
-        is-number (not (js/isNaN value-as-number))]
+        is-number (not (js/isNaN value-as-number))
+        is-bool (or (= "true" value) (= "false" value) false)]
     (cond
       is-keyword value-as-keyword
       is-number value-as-number
+      is-bool (= "true" value)
       :else value)))
 
 (defn- query-data-get-value

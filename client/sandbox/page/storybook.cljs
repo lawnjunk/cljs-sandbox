@@ -2,7 +2,7 @@
   (:require
     [spade.core :as spade]
     [garden.color :as color]
-    [sandbox.unit.counter :refer [unit-counter]]
+    [sandbox.unit.counter :refer [unit-counter unit-counter-doc]]
     [sandbox.unit.spinner-list :refer [unit-spinner-list]]
     [sandbox.style :as style]
     [sandbox.style :refer [pallet]]
@@ -81,9 +81,7 @@
   [:div [:h1 "select a story"]])
 
 (defn page-storybook [param]
-  (let [query (:query param)
-        story (keyword (get param :id :none))]
-    (println "storybook" query)
+  (let [story (keyword (get param :id :none))]
     [:div {:class (css-storybook-left)}
      [:section.panel
        [:h2 ":story:"]
@@ -93,7 +91,7 @@
        ]]
      [:main.content
       (case story
-        :counter [unit-counter]
+        :counter [:div [unit-counter] [unit-counter-doc]]
         :spinner [unit-spinner-list]
         [story-404])
       ]]))

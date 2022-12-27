@@ -56,6 +56,22 @@
       (println "wait-cancel" timeout-id)
       (js/clearTimeout timeout-id))))
 
+(defn interval 
+  "wate ms delay then run f and repeat
+   returns a cancel fn
+
+   (wait 200 handler)
+
+   (let [cancel (wait 200 handler)]
+     ...
+     (cancel))"
+   [ms f]
+  (let [interval-id (js/setInterval f ms)]
+    (println "interval-start" interval-id)
+    (fn []
+      (println "interval-cancel" interval-id)
+      (js/clearInterval interval-id))))
+
 (def id-gen uuidlib/v4)
 (defn id-atom [] (reagent/atom (id-gen)))
 

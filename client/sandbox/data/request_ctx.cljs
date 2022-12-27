@@ -78,7 +78,6 @@
 ; TODO -> update db :request-count
 (reframe/reg-event-fx
   :request-ctx-update-success
-  "update a request-ctx in request-ctx-stash after success"
   (fn [cofx [_ request-id res-data error]]
        (let [db (:db cofx)
              request-ctx-stash (db-get-request-ctx-stash db)
