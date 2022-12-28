@@ -82,13 +82,13 @@
   (into [] (apply concat args)))
 
 
-(defn clamp-min [value vmin]
+(defn clamp-min [vmin value]
   (if (< value vmin) vmin value))
 
-(defn clamp-max [value vmax]
+(defn clamp-max [vmax value]
   (if (> value vmax) vmax value))
 
-(defn clamp [value vmin vmax]
+(defn clamp [vmin vmax value]
   (-> value
       (clamp-min vmin)
       (clamp-max vmax)))

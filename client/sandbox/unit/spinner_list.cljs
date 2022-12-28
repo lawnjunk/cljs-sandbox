@@ -14,13 +14,13 @@
 ; TODO debounce the input
 (defn handle-input-change
   [state e]
-  (reset! state (util/clamp (-> e .-target .-value) 0 200)))
+  (reset! state (util/clamp 0 200 (-> e .-target .-value))))
 
 ; TODO make a spinner list
 ; * number input controlls item count
 ; TODO instead of using reagent/atom use a simple-store
 (defn unit-spinner-list [count]
-  (let [count (reagent/atom (util/clamp (or count  0) 1 200))]
+  (let [count (reagent/atom (util/clamp 1 200 (or count  0)))]
     (fn []
       [:div.spinner-list {:class (css-spinner-list)}
        [:input
@@ -29,7 +29,7 @@
          :min 1
          :value @count}]
         [:div.item-container
-          (reverse (for [x (range 0 (util/clamp-min @count 1))]
+          (reverse (for [x (range 0 (util/clamp-min 1 @count))]
             [:div {:key (str "spinner-" x)}
               [unit-spinner]
               ]))]])))

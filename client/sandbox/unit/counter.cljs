@@ -74,11 +74,11 @@
                 inc-speed (fn [] 
                             (qdb-update-interval 
                               qdb 
-                              (util/clamp-max (+ auto-inc-interval 55) 1000)))
+                              (util/clamp-max 1000 (+ auto-inc-interval 55))))
                 dec-speed (fn [] 
                             (qdb-update-interval 
                               qdb 
-                              (util/clamp-min (- auto-inc-interval 55) 5)))
+                              (util/clamp-min 5 (- auto-inc-interval 55))))
                 ] 
             (when (and auto-inc-on (not= @a-delta-auto-inc-interval  auto-inc-interval)) 
               (reset-interval auto-inc-interval))
