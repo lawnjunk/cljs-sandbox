@@ -82,8 +82,10 @@ app.use((req, res, next) => {
 
 app.post('/api/spinner', async (req, res) => {
   let delayInMS = req.body.delayInMS || Math.floor(Math.random() * 2000) + 200
+  return res.end(400)
   await sleep(delayInMS)
-  res.json({
+  // return res.status(400).json({cool: "wat"})
+  res.status(200).json({
     content: faker.lorem.words(3),
     imageUrl: "https://picsum.photos/200/200.jpg?grayscale&rand=" + 
     faker.datatype.hexadecimal({length: 5}),

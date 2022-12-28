@@ -23,7 +23,7 @@
                       success (str (:is-success req-ctx))
                       res-data (get req-ctx :res-data {})
                       content (or (get res-data :content)
-                                  (get-in req-ctx [:error :content]))
+                                  (get-in req-ctx [:error :hint]))
                       imageUrl (get res-data :imageUrl) ]
                   [:div
                    (if (:pending req-ctx)

@@ -5,31 +5,6 @@
     [sandbox.util :as util]
     [sandbox.data.request-metrix]))
 
-; db 
-;   :request-context-stash 
-;      request-id : req-ctx
-;   :request-count
-;      :total (total number of requests) made
-;      :pending (total number of request pending)
-;      :success 
-;      :fail
-
-(defn create
-  ([url]
-    (create url (util/id-gen) nil nil nil nil nil))
-  ([url request-id req-data ajax fx dispatch header]
-    {:request-id request-id
-     :ajax ajax
-     :url url
-     :pending true
-     :req-data req-data
-     :res-data nil
-     :error nil
-     :fx fx
-     :dispatch dispatch
-     :header header
-     :is-success nil}))
-
 (defn- db-get-request-ctx-stash [db]
   (get db :request-ctx-stash {}))
 
@@ -39,7 +14,7 @@
     (let [db (:db world)
           request-ctx-stash (db-get-request-ctx-stash db)
           request-ctx (get request-ctx-stash request-id)]
-      (if (and request-ctx (:pending request-ctx)) 
+      (if (and request-ctx (:pending request-ctx))
         (let [ajax (get request-ctx :ajax)]
           (.abort ajax)))
       {:dispatch [:request-metrix-request-abort]})))
@@ -78,26 +53,38 @@
   (reframe/dispatch
     [:request-ctx-put request-ctx]))
 
-(defn- create-finished-fx
-  [request-ctx fx]
-  (let [extra-dispatch (get  request-ctx :dispatch)
-        extra-fx-a (when extra-dispatch [[:dispatch (conj extra-dispatch request-ctx)]])
-        extra-fx-b (get request-ctx :fx)]
-    (util/vconcat fx extra-fx-a extra-fx-b)))
+(defn- create-conj-request-ctx-into-fx-mapper
+  "conj the request-ctx onto the args of an fx-item"
+  [request-ctx]
+  (fn [fx-item]
+    (let [fx-type  (first fx-item)
+          fx-args  (second fx-item)]
+      [fx-type (conj fx-args request-ctx)])))
 
-; TODO -> update db :request-count
+(defn- create-finished-fx
+  "* create fx that inculeds the request-ctx :dispatch
+   * conj the request-ctx into the arch of each fx-item"
+  [request-ctx fx]
+  (let [fx (or fx [])
+        extra-dispatch (get  request-ctx :dispatch)
+        extra-fx (when extra-dispatch [[:dispatch extra-dispatch]])
+        fx (util/vconcat fx extra-fx)
+        fx (map (create-conj-request-ctx-into-fx-mapper request-ctx) fx)
+        fx (into [] fx)]
+    (if (empty? fx) nil fx)))
+
 (reframe/reg-event-fx
   :request-ctx-update-success
-  (fn [cofx [_ request-id res-data error]]
+  (fn [cofx [_ request-id response error]]
        (let [db (:db cofx)
              request-ctx-stash (db-get-request-ctx-stash db)
              request-ctx (get request-ctx-stash request-id)]
-         (when request-ctx 
+         (when request-ctx
            (let [request-ctx (-> request-ctx
                                  (assoc :pending false)
                                  (assoc :is-success true)
-                                 (assoc :error error)
-                                 (assoc :res-data res-data))
+                                 (assoc :error error))
+                 request-ctx (merge request-ctx response)
                  fx (create-finished-fx request-ctx [[:dispatch [:request-metrix-request-success]]])]  
              {:fx fx
               :db (->> request-ctx
@@ -111,10 +98,9 @@
     (reframe/dispatch
       [:request-ctx-update-success request-id res-data error])))
 
-; TODO -> update db :request-count
 (reframe/reg-event-fx
   :request-ctx-update-error
-  (fn [cofx [_ request-id res-data error]]
+  (fn [cofx [_ request-id response error]]
        (let [db (:db cofx)
              request-ctx-stash (get db :request-ctx-stash {})
              request-ctx (get request-ctx-stash request-id)]
@@ -123,8 +109,8 @@
                  (-> request-ctx
                      (assoc :pending false)
                      (assoc :is-success false )
-                     (assoc :error error)
-                     (assoc :res-data res-data))
+                     (assoc :error error))
+                 request-ctx (merge request-ctx response)
                  fx (create-finished-fx request-ctx [[:dispatch [:request-metrix-request-error]]])]
                   {:fx fx
                    :db  (->> request-ctx
