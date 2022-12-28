@@ -2,7 +2,7 @@
   (:require
     [re-frame.core :as reframe]
     [sandbox.side.ldb :as ldb]
-    [sandbox.http.request :refer [request]]))
+    [sandbox.side.request :refer [request]]))
 
 (reframe/reg-event-fx
   :api

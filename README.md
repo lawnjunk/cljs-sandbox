@@ -25,6 +25,7 @@
     * request-metrix - used to track metadata about all api requests
 
 ## learning goals
+- [ ] build time configuration variables
 - [x] page routing with params using secretary
 - [x] style the components with garden/spade
 - [ ] write components with inputs and forms

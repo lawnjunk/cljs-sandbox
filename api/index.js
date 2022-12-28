@@ -82,7 +82,7 @@ app.use((req, res, next) => {
 
 app.post('/api/spinner', async (req, res) => {
   let delayInMS = req.body.delayInMS || Math.floor(Math.random() * 2000) + 200
-  return res.end(400)
+  // return res.end(400)
   await sleep(delayInMS)
   // return res.status(400).json({cool: "wat"})
   res.status(200).json({

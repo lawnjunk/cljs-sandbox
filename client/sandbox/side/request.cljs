@@ -1,6 +1,6 @@
 ; a wrapper around cljs-ajax that tracks the requests
 ; using sandbox.data.request-ctx
-(ns sandbox.http.request
+(ns sandbox.side.request
   (:require
     [ajax.core :as ajax]
     [ajax.protocols :as protocols]
@@ -78,6 +78,8 @@
     ; so things like headers and status will not be accesable from 204
     (let [response-204 {:res-status 204 :res-body nil :res-text nil
                         :was-aborted nil :res-data nil :res-header {}}
+          ; status 0 will  occur when express calls res.end()
+          ; status 0 will also occur if server is not running
           response-abort {:status 0
                           :failure :failed
                           :status-text "no server or server closed connection"
@@ -110,13 +112,15 @@
   "create an http request and store it as request-ctx in app-db
       - see sandbox.data.request-ctx
 
+   request-id can be used to fetch the request-ctx later
+     (:request-id) request-id
+
    to trigger events on finish use 
      (:fx) [[:dispatch [:debug :some-tag]]] (request-ctx will NOT be conjed)
      (:dispatch) [:debug :some-tag]         (request-ctx will be conjed)
 
    request config options
      :url **required**
-     (:request-id) request-id
      (:method) :post :get ...etc      (default to :post)
      (:req-format) :raw :json :none   (default to :json if :req-data is set)
                                       (default to :none if :req-data not set)
