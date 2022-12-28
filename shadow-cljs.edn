@@ -1,5 +1,5 @@
 ;; shadow-cljs configuration
-{:source-paths ["client"]
+{:source-paths ["src"]
  :nrepl {:port 7777}
  :dependencies
  [[reagent                   "1.1.0"]
@@ -17,13 +17,12 @@
            :output-dir "public/js"
            :asset-path "/js"
            :closure-defines
-           { sandbox.environ/API_URI "http://localhost:7766" }
+           {supervisor.environ/API_URI "http://localhost:8001"}
            :compiler-options
              {:source-map true
               :source-map-include-sources-content true
               :source-map-detail-level :all}
-           :modules {:sandbox {:init-fn sandbox.main/init}}
-           :dev-http {9000 "public"}
+           :modules {:supervisor {:init-fn supervisor.main/init}}
            :devtools {:repl-pprint false
                       :http-root "public"
                       :http-port 9999

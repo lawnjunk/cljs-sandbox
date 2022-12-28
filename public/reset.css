@@ -35,3 +35,11 @@ textarea:focus {
   outline: green dotted 2px;
   outline-offset: .05em;
 }
+
+input {
+  width: 100%;
+  border: 2px solid black;
+  padding: 0.5em;
+}
+
+
