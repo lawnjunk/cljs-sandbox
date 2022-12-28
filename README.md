@@ -1,6 +1,20 @@
 # supervisor
 > dashboard for supervising pomelo
 
+```
+< mmm, pomelos are delicous >
+ --------------------------
+   \
+    \
+        .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /'\_   _/`\
+    \___)=(___/
+```
+
 # TODO
 * unit-login-form
 * unit-click-copy-icon
