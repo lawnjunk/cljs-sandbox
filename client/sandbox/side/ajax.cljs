@@ -1,13 +1,17 @@
 ; a wrapper around cljs-ajax that tracks the requests
 ; using sandbox.data.request-ctx
-(ns sandbox.side.request
+; you should probbly not use this file diretly
+; if you want to make an ajax request use sandbox.side.api/request
+
+(ns sandbox.side.ajax
   (:require
     [ajax.core :as ajax]
     [ajax.protocols :as protocols]
     [ajax.json :refer [read-json-native]]
     [ajax.interceptors :as interceptors]
     [sandbox.util :as util]
-    [sandbox.data.request-ctx :as request-ctx]))
+    [sandbox.data.request-ctx :as request-ctx]
+    [sandbox.environ :as environ]))
 
 ; (defn handle-progress [e]
 ;   (util/xxl e)
@@ -107,33 +111,14 @@
     :json (ajax/json-request-format)
     (ajax/text-request-format)))
 
-; TODO suport :form-data https://github.com/JulianBirch/cljs-ajax#getpost-examples
-(defn request
-  "create an http request and store it as request-ctx in app-db
-      - see sandbox.data.request-ctx
-
-   request-id can be used to fetch the request-ctx later
-     (:request-id) request-id
-
-   to trigger events on finish use 
-     (:fx) [[:dispatch [:debug :some-tag]]] (request-ctx will NOT be conjed)
-     (:dispatch) [:debug :some-tag]         (request-ctx will be conjed)
-
-   request config options
-     :url **required**
-     (:method) :post :get ...etc      (default to :post)
-     (:req-format) :raw :json :none   (default to :json if :req-data is set)
-                                      (default to :none if :req-data not set)
-     (:res-format) :raw :json :none   (defalut to :json)
-     (:req-data) data to send in body (can be FormData if :res-format is :raw)
-     (:req-query) request query-string map
-     (:req-header) request header map
-     (:timeout-in-ms) (default 0 none)"
+(defn raw-request
+  "read the sandbox.side.api/request docs"
   [options]
   (let [request-id (get options :request-id (util/id-gen))
         fx (get :fx options)
         dispatch (get :dispatch options)
-        url (str "" (get options :url))
+        url (:url options)
+        url (if url url (str environ/API_URI (:route options)))
         method (get options :method :post)
         req-data (:req-data options)
         req-format (get options :req-format (when req-data :json))

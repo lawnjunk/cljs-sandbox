@@ -16,6 +16,8 @@
           {:target :browser
            :output-dir "public/js"
            :asset-path "/js"
+           :closure-defines
+           { sandbox.environ/API_URI "http://localhost:7766" }
            :compiler-options
              {:source-map true
               :source-map-include-sources-content true

@@ -1,6 +1,7 @@
+; note request-ctx are created by sandbox.side.ajax/raw-request
+
 (ns sandbox.data.request-ctx
   (:require
-    [ajax.core :as cljs-ajax]
     [re-frame.core :as reframe]
     [sandbox.util :as util]
     [sandbox.data.request-metrix]))
@@ -14,7 +15,7 @@
     (let [db (:db world)
           request-ctx-stash (db-get-request-ctx-stash db)
           request-ctx (get request-ctx-stash request-id)]
-      (if (and request-ctx (:pending request-ctx))
+      (when (and request-ctx (:pending request-ctx))
         (let [ajax (get request-ctx :ajax)]
           (.abort ajax)))
       {:dispatch [:request-metrix-request-abort]})))
@@ -29,7 +30,7 @@
           request-ctx-stash (db-get-request-ctx-stash db)
           request-ctx (get request-ctx-stash request-id)
           new-request-ctx-stash (dissoc request-ctx-stash request-id)]
-      (if (and request-ctx (:pending request-ctx))
+      (when (and request-ctx (:pending request-ctx))
         (let [ajax (get request-ctx :ajax)]
           (.abort ajax)))
       {:db (assoc db :request-ctx-stash new-request-ctx-stash)

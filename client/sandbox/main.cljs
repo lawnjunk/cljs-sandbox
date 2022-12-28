@@ -10,6 +10,7 @@
     [sandbox.side.qdb :as qdb]
     [sandbox.side.ldb :as ldb]
     [sandbox.side.debug]
+    [sandbox.environ]
     ))
 
 ; (reframe/reg-sub :all (fn [db] db))

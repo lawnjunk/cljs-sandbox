@@ -2,9 +2,6 @@
 > a nice lil re-frame example repo.
 
 # TODO
-* create a :qdb effect that uses the query string as a datastore
-* create a :ldb effect that uses localstorge as a datastore
-* ?create a :api effect that makes api requests and manages follow-up :fx
 * create a component that demonstrates how to work with forms
 
 # about
@@ -25,7 +22,7 @@
     * request-metrix - used to track metadata about all api requests
 
 ## learning goals
-- [ ] build time configuration variables
+- [x] build time configuration variables
 - [x] page routing with params using secretary
 - [x] style the components with garden/spade
 - [ ] write components with inputs and forms

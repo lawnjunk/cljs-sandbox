@@ -1,10 +1,11 @@
 (ns sandbox.http.spinner
   (:require
-    [sandbox.side.request :refer [request]]))
+    [sandbox.side.api :refer [request]]))
 
 (defn http-spinner [request-id]
   (request
-    {:url "http://localhost:7766/api/spinner"
+    {:route "/api/spinner"
      :request-id request-id
      :dispatch [:debug :http-spinner]
+     :auth-required true
      }))
