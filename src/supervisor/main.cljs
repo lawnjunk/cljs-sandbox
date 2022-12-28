@@ -1,5 +1,8 @@
 (ns supervisor.main
   (:require
+    [oops.core :as oops]
+    ["@faker-js/faker" :refer [faker]]
+
     [reagent.dom]
     [re-frame.core :as reframe]
     [secretary.core :as secretary]
@@ -12,6 +15,16 @@
     [supervisor.side.debug]
     [supervisor.environ]
     ))
+
+; TODO make a supervisor.fake with a bunch of fns for faking data
+; word line email hex image-url hex-color city country name
+; bool float int date-past date-future date-between adjective
+; password
+
+; TODO add date format utils to supervisor.util
+; TODO add pretty-bytes and pretty-ms to supervisor.util
+
+(util/xxl "FAKE WORD"  ((oops/oget faker "random.words") 5))
 
 ; (reframe/reg-sub :all (fn [db] db))
 ; (println  (reframe/subscribe[:all]))
