@@ -47,6 +47,13 @@
   (.replaceState js/window.history nil nil route)
   (secretary/dispatch! route))
 
+(defn push-route!
+  "using browser history api replace state with new route
+   and secretary/dispatch! the new route"
+  [^String route]
+  (.pushState js/window.history nil nil route)
+  (secretary/dispatch! route))
+
 (defn replace-query!
   "use the browser history api to replace the url query-string"
   [^String query-string]
@@ -61,6 +68,13 @@
   (let [search (str "?" (fetch-query))
         route (str pathname search) ]
     (replace-route! route)))
+
+(defn push-pathname!
+  "user the browser history api to replace the url pathname"
+  [^String pathname]
+  (let [search (str "?" (fetch-query))
+        route (str pathname search) ]
+    (push-route! route)))
 
 (defn- query-data-from-string
   "convert a query-string into a goog.Uri.QueryData"

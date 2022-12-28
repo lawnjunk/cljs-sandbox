@@ -63,8 +63,7 @@
     (util/vconcat [:a (merge opts {:on-click 
          (fn [e]
            (.preventDefault e)
-           (location/replace-pathname! href)
-           (secretary/dispatch! (location/fetch-route))
+           (location/push-pathname! href)
            )})]
             children)))
 
@@ -74,7 +73,6 @@
          (fn [e]
            (.preventDefault e)
            (location/replace-pathname! href)
-           (secretary/dispatch! (location/fetch-route))
            )})]
             children)))
 

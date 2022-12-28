@@ -19,6 +19,12 @@
 * unit-login-form
 * unit-click-copy-icon
 * unit-click-copy-span
+* counter-component
+  * :tag it with a name
+  * inc each time componet mount
+  * dec when unmount
+  * handler for no more of :tag type
+    * use for removing keys from :qdb
 
 # about
 * so what is in the dirs?
