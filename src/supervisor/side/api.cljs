@@ -12,8 +12,8 @@
     (println "api-request fx")
     (let [ldb (:ldb cofx)
           auth-required (get request-options :auth-required)
-          auth-token (get ldb :auth-token "none")
-          auth-header {:x-supervisor-token auth-token}
+          access-token (get ldb :access-token "none")
+          auth-header {:x-supervisor-token access-token}
           header (-> (get request-options :req-header)
                       (merge (when auth-required auth-header)))]
       {:api (util/xxdp (merge request-options {:req-header header}))})))
@@ -21,6 +21,8 @@
 (reframe/reg-fx
   :api
   (fn [request-options]
+    (println "API_FX")
+    (println request-options)
     (ajax/raw-request request-options)))
 
 (defn request

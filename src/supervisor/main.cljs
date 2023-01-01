@@ -2,7 +2,6 @@
   (:require
     [oops.core :as oops]
     ["@faker-js/faker" :refer [faker]]
-
     [reagent.dom]
     [re-frame.core :as reframe]
     [secretary.core :as secretary]
@@ -14,6 +13,7 @@
     [supervisor.side.ldb :as ldb]
     [supervisor.side.debug]
     [supervisor.environ]
+    [supervisor.side.api]
     ))
 
 ; TODO make a supervisor.fake with a bunch of fns for faking data

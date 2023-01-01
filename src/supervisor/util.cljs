@@ -6,7 +6,7 @@
      [clojure.string :as s]
      [clojure.walk :refer [keywordize-keys]] 
      [oops.core :as oops]
-     [clojure.pprint :as pprint]
+     [fipp.edn :as fipp]
      [goog.functions :as goof])
   (:import goog.Uri.QueryData))
 
@@ -19,10 +19,12 @@
       (logger "DBG" title ">>" stuff)
       stuff)))
 
+(defn pp [& args]
+  (apply js/console.log (clj->js args {:keyword-fn str})))
 
 (def xxl js/console.log)
-(def xxp println)
-(def xxdp (xxd-create xxp))
+(def xxp pp)
+(def xxdp (xxd-create pp))
 (def xxdl (xxd-create xxl))
 
 (defn partial-right

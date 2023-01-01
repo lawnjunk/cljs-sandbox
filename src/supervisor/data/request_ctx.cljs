@@ -69,7 +69,8 @@
   (let [fx (or fx [])
         extra-dispatch (get  request-ctx :dispatch)
         extra-fx (when extra-dispatch [[:dispatch extra-dispatch]])
-        fx (util/vconcat fx extra-fx)
+        request-ctx-fx (:fx request-ctx)
+        fx (util/vconcat fx request-ctx-fx extra-fx)
         fx (map (create-conj-request-ctx-into-fx-mapper request-ctx) fx)
         fx (into [] fx)]
     (if (empty? fx) nil fx)))

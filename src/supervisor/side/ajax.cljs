@@ -115,8 +115,8 @@
   "read the supervisor.side.api/request docs"
   [options]
   (let [request-id (get options :request-id (util/id-gen))
-        fx (get :fx options)
-        dispatch (get :dispatch options)
+        fx (get options :fx )
+        dispatch (get options :dispatch)
         url (:url options)
         url (if url url (str environ/API_URI (:route options)))
         method (get options :method :post)

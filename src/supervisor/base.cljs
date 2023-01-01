@@ -2,10 +2,19 @@
   (:require
     [reagent.core :as reagent]
     [secretary.core :as secretary]
+    [garden.color :as color]
     [spade.core :refer [defclass]]
     [supervisor.style :refer [pallet]]
     [supervisor.location :as location]
+    [clojure.string :as string]
     [supervisor.util :as util]))
+
+(defn- el-create-class-option
+  [options style]
+  (let [spade-class (style)
+        options-class (:class options)
+        class-list [spade-class options-class]] 
+    (string/join " " class-list)))
 
 (defn- el-create-no-css
   [tag-name ]
@@ -15,12 +24,21 @@
 (defn- el-create-with-css
   [tag-name style]
   (fn [options & children]
-    (util/vconcat [tag-name (merge {:class (style)} options)] children)))
+    (util/vconcat [tag-name
+                   (merge
+                     options
+                     {:class (el-create-class-option options style)})]
+                  children)))
 
 (defn- el-create-with-attribute
   [tag-name style attribute]
   (fn [options & children]
-    (util/vconcat [tag-name (merge {:class (style)} attribute options)] children)))
+    (util/vconcat [tag-name
+                   (merge
+                     attribute
+                     options
+                     {:class (el-create-class-option options style)})] 
+                  children)))
 
 (defn- el-create
   ([tag-name] (el-create-no-css tag-name))
@@ -44,18 +62,51 @@
 (defclass css-anchor []
   {:text-decoration "underlined"})
 
-(defclass css-button []
-  {:background (:button-main @pallet)
-   :color "#000"
-   :padding "5px"
-   :border "none"
-   }
-  [:&:hover :&:focus
-   {:background (:button-focus @pallet) }]
-  [:&:active
-   {:background (:button-active @pallet) }]) 
+(defclass css-button 
+  [options]
+  (let [pallet (or (:pallet options) @pallet)
+        primary-color (:button-main pallet)
+        selected-color (:button-selected pallet)] 
+    [:& {:background (:button-main pallet) 
+         :color "#000"
+         :padding "5px"
+         :border "none"
+         :cursor :pointer}
+        [:&:focus
+         {:background (color/darken primary-color 5)}]
+        [:&:hover
+         {:background (color/darken primary-color 10)} ]
+        [:&:active
+         {:background (color/darken primary-color 15)} ]
+        [:&:disabled
+         {:background  (color/lighten primary-color 5)
+          :color :#999999
+          :cursor :auto}]
+        [:&.seleced 
+         [:&:focus
+          {:background (color/darken selected-color 5)}]
+         [:&:hover
+          {:background (color/darken selected-color 10)} ]
+         [:&:active
+          {:background (color/darken selected-color 15)} ]
+         [:&:disabled
+          {:background  (color/lighten selected-color 5)
+           :color :#999999
+           :cursor :auto
+           }]
+
+
+
+    {:background selected-color}]])
+  )
 
 (def Button (el-create :button css-button))
+
+
+(def button-debug-css-options
+  {:pallet  { :button-main "#9cb8ed" :button-selected "#a3dbe0" }})
+
+(def ButtonDebug (el-create :button (partial css-button button-debug-css-options)))
 (def Submit (el-create :input css-button {:type "submit"}))
 
 (defn Hpush[opts & children]

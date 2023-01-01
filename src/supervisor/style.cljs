@@ -20,6 +20,8 @@
    :container-fg "#000"
    :fg "#000"
    :button-main "#B9C09E"
+   :button-selected "#d0eba7"
+   :button-debug :#9cb8ed
    :button-focus "#a7aa98"
    :button-active "#979b85"
    :button-selected-bg "#62635d"
