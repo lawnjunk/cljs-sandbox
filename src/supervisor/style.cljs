@@ -1,35 +1,108 @@
 (ns supervisor.style
   (:require
     [spade.core :as spade]
-    [garden.color :as color]
+    [garden.color :as gcolor]
     [garden.units :as units]
     [clojure.string :as s]
     [reagent.core :as reagent]
     [supervisor.util :as util]))
 
-(def size-px-header-height (units/px 40))
-(def size-px-main-height (util/css-calc :100vh :- size-px-header-height))
+(defn as-color
+  [value]
+  (if (keyword? value)
+    (name value)
+    value))
 
-(def breakpoint
-  {:mobile 600
-   :tablet 900})
+(defn lighten
+  "lighten a color with a parsable number amount"
+  [color amount]
+  (gcolor/lighten color (util/parse-number amount)))
 
-(def pallet (reagent/atom
-  {:container-bg " #deddda"
-   :bg " #deddda"
-   :container-fg "#000"
-   :fg "#000"
-   :button-main "#B9C09E"
-   :button-selected "#d0eba7"
-   :button-debug :#9cb8ed
-   :button-focus "#a7aa98"
-   :button-active "#979b85"
-   :button-selected-bg "#62635d"
-   :button-selected-fg "#B9C09E"
-   :storybook-panel "#74b287"
-   :storybook-nav-unselected "#4da568"
-   :storybook-nav-selected "#c0db97"
-   :pending-1 "#3a6f72"
-   :pending-2 "#6c9684"
-   :header-bg "#68cc86"
-   }))
+(defn darken
+  "darken a color with a parsable number amount"
+  [color amount]
+  (gcolor/darken color (util/parse-number amount)))
+
+(defn opacify
+  "opacify a color with a parsable number amount"
+  [color amount]
+  (gcolor/opacify color (util/parse-number amount)))
+
+; px size
+(defn px-val
+  [value]
+  (if (map? value)
+    (:magnitude val)
+    (util/parse-int value)))
+
+(defn px
+  "create a garden.units/px from a parable int"
+  [value]
+  (units/px (util/parse-int value)))
+
+(defn- create-px-math
+  "create a px arithmatic fn that works with keywords strings and nums and px"
+  [f]
+  (fn [a b]
+    (px (f (px-val a) (px-val b)))))
+
+(def px-sub (create-px-math -))
+(def px-add (create-px-math +))
+(def px-mul (create-px-math *))
+(def px-div (create-px-math /))
+(def px-mod (create-px-math mod))
+
+
+(defn mixin-button-color
+  "style the colors for a button like element
+  including :focus :hover :active :disabled
+
+  adding a .selected class will use the selected-bg/fg
+  insdead of primary
+  "
+  ([primary-bg]
+   (mixin-button-color
+     primary-bg
+     "#000000"
+     "#000000"
+     "#000000"
+     "#999999"
+     ))
+  ([primary-bg selected-bg]
+   (mixin-button-color
+     primary-bg
+     "#000000"
+     selected-bg
+     "#000000"
+     "#999999"
+     ))
+  ([primary-bg primary-fg selected-bg selected-fg disabled-fg]
+  [:& {:background primary-bg
+       :color primary-fg
+       :cursor :pointer }
+   [:&:focus
+    {:background (darken primary-bg 5)}]
+   [:&:hover
+    {:background (darken primary-bg 10)} ]
+   [:&:active
+    {:background (darken primary-bg 15)} ]
+   [:&:disabled
+    {:background  (lighten primary-bg 5)
+     :color disabled-fg
+     :cursor :auto}]
+   [:&.seleced
+    {:background selected-bg
+     :color selected-fg}
+    [:&:focus
+     {:background (darken selected-bg 5)}]
+    [:&:hover
+     {:background (darken selected-bg 10)} ]
+    [:&:active
+     {:background (darken selected-bg 15)} ]
+    [:&:disabled
+     {:background  (lighten selected-bg 5)
+      :color disabled-fg
+      :cursor :auto
+      }]
+    ]])
+  )

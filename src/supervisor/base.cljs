@@ -4,16 +4,18 @@
     [secretary.core :as secretary]
     [garden.color :as color]
     [spade.core :refer [defclass]]
-    [supervisor.style :refer [pallet]]
+    [supervisor.style :as style]
     [supervisor.location :as location]
     [clojure.string :as string]
+    [supervisor.data.theme :as theme]
     [supervisor.util :as util]))
 
 (defn- el-create-class-option
   [options style]
-  (let [spade-class (style)
+  (let [css-theme @(theme/fetch)
+        spade-class (style css-theme)
         options-class (:class options)
-        class-list [spade-class options-class]] 
+        class-list [spade-class options-class]]
     (string/join " " class-list)))
 
 (defn- el-create-no-css
@@ -37,7 +39,7 @@
                    (merge
                      attribute
                      options
-                     {:class (el-create-class-option options style)})] 
+                     {:class (el-create-class-option options style)})]
                   children)))
 
 (defn- el-create
@@ -45,10 +47,12 @@
   ([tag-name style] (el-create-with-css tag-name style))
   ([tag-name style attribute] (el-create-with-attribute tag-name style attribute)))
 
-(defclass css-container []
-  {:background (:container-bg @pallet)
-   :color (:container-fg @pallet)}
-  ["*" {:color (:container-fg @pallet)}])
+(defclass css-container [opts]
+  (let [pallet (:pallet opts)]
+    [:&
+     {:background (:container-bg pallet)
+      :color (:container-fg pallet)}
+     ["*" {:color (:container-fg pallet)}]]))
 
 (def Container (el-create :div css-container))
 (def Div (el-create  :div))
@@ -59,59 +63,25 @@
 
 (def Em (el-create :em css-bold))
 
-(defclass css-anchor []
-  {:text-decoration "underlined"})
-
-(defclass css-button 
+(defclass css-button
   [options]
-  (let [pallet (or (:pallet options) @pallet)
+  (let [ pallet (:pallet options)
         primary-color (:button-main pallet)
-        selected-color (:button-selected pallet)] 
-    [:& {:background (:button-main pallet) 
-         :color "#000"
-         :padding "5px"
-         :border "none"
-         :cursor :pointer}
-        [:&:focus
-         {:background (color/darken primary-color 5)}]
-        [:&:hover
-         {:background (color/darken primary-color 10)} ]
-        [:&:active
-         {:background (color/darken primary-color 15)} ]
-        [:&:disabled
-         {:background  (color/lighten primary-color 5)
-          :color :#999999
-          :cursor :auto}]
-        [:&.seleced 
-         [:&:focus
-          {:background (color/darken selected-color 5)}]
-         [:&:hover
-          {:background (color/darken selected-color 10)} ]
-         [:&:active
-          {:background (color/darken selected-color 15)} ]
-         [:&:disabled
-          {:background  (color/lighten selected-color 5)
-           :color :#999999
-           :cursor :auto
-           }]
-
-
-
-    {:background selected-color}]])
-  )
+        selected-color (:button-selected pallet)]
+    [:& { :padding "5px"
+         :border "none" }
+     (style/mixin-button-color primary-color selected-color)]))
 
 (def Button (el-create :button css-button))
-
-
 (def button-debug-css-options
   {:pallet  { :button-main "#9cb8ed" :button-selected "#a3dbe0" }})
 
 (def ButtonDebug (el-create :button (partial css-button button-debug-css-options)))
-(def Submit (el-create :input css-button {:type "submit"}))
+(def ButtonSubmit (el-create :input css-button {:type "submit"}))
 
 (defn Hpush[opts & children]
   (let [href (:href opts)]
-    (util/vconcat [:a (merge opts {:on-click 
+    (util/vconcat [:a (merge opts {:on-click
          (fn [e]
            (.preventDefault e)
            (location/push-pathname! href)
@@ -120,7 +90,7 @@
 
 (defn Hreplace[opts & children]
   (let [href (:href opts)]
-    (util/vconcat [:a (merge opts {:on-click 
+    (util/vconcat [:a (merge opts {:on-click
          (fn [e]
            (.preventDefault e)
            (location/replace-pathname! href)
@@ -134,4 +104,3 @@
 (def Clearfix (el-create :span css-clearfix))
 
 (def Element reagent/create-class)
-

@@ -16,7 +16,7 @@
      [clojure.string :as s]
      [secretary.core :as secretary]
      [supervisor.util :as util])
-  (:import goog.Uri.QueryData))
+  (:import goog.Uri.QueryData))   
 
 (defn fetch-route
   "{location.pathname}{location.query}
@@ -194,4 +194,4 @@
   []
   (-> (fetch-query)
       (query-data-from-string)
-      (query-data-to-map)))
+      (query-data-to-map)))  

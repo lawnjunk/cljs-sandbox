@@ -10,9 +10,9 @@
     [supervisor.data.request-ctx :as request-ctx]))
 
 (spade/defclass css-unit-form-login []
-  [:input 
+  [:input
    {:margin-bottom :10px}]
-  [:.server-message-container 
+  [:.server-message-container
    {:height :75px}]
   [:.server-message
    {:display :inline-block
@@ -47,7 +47,7 @@
   :form-login-submit-handler
   (fn [cofx [_ {:keys [values dirty path]} request-id]]
     (let [db (:db cofx)]
-    (println "request-id" request-id) 
+    (println "request-id" request-id)
     (println "values" values)
     (println "dirty" dirty)
     (println "path" path)
@@ -63,9 +63,8 @@
 
 ; TODO choose a validation library for deling with forms
 ; + bonus points for lib if there is utility suplamenting fx
-; and add custom warning bubble if dirty 
-
-(defn- form-login
+; and add custom warning bubble if dirty
+(defn- part-form
   [{:keys [handle-submit
            submitting?
            values
@@ -96,20 +95,15 @@
         :disabled submitting?
         :on-change handle-change
         :on-blur handle-blur}]
-      [<>/Button
-       {:type "submit"
-        :disabled submitting?
-        }
-       "submit"
-       ]
+      [<>/ButtonDebug {:disabled submitting?} "submit" ]
       ])
   )
 
 (defn unit-form-login [opt]
   (let [request-id (util/id-atom)]
     (fn []
-      (let [ctx @(request-ctx/fetch request-id)
-            disabled (when ctx (:pending ctx)) ]
+      (let [ctx @(request-ctx/fetch @request-id)
+            pending (when ctx (:pending ctx)) ]
         [:div {:class (css-unit-form-login)}
          [fork/form
           {:path [:form-login]
@@ -118,43 +112,6 @@
            :clean-on-unmount? true
            :on-submit #(reframe/dispatch [:form-login-submit-handler % @request-id])
            :initial-values (:initial-values opt)}
-          form-login]]))))
-
-(spade/defclass css-story-unit-form-login []
-   [:.about
-    {:background :black
-     :color :white
-     :padding :10px
-     :margin-bottom :10px
-     :height :125px
-     }]
-   [:button {:margin-top :10px
-             :margin-right :10px}])
-
-(reframe/reg-event-db
-  ::form-login-clear-server-message
-  (fn [db]
-    (fork/set-server-message db :form-login nil)))
-
-(defn- clear-server-message []
-  (reframe/dispatch [::form-login-clear-server-message]))
-
-(defn story-unit-form-login []
-  (let [token  @(access-token/fetch)
-        has-access-token (boolean token)]
-    [:div {:class (css-story-unit-form-login)}
-     [:div.about
-       [:h1 "story unit-form-login" ]
-       [:p "ldb has auth-token: " (str has-access-token)]
-       [<>/ButtonDebug
-        {:on-click #(clear-server-message) }
-        "clear error message"]
-       [<>/ButtonDebug
-        {:on-click #(access-token/write nil)
-         :disabled (not has-access-token)}
-        "clear access-token"]
-       ]
-     [unit-form-login
-      {:initial-values
-       {:email "duncan@kiipo.com" :password "123456"}}]
-     ]))
+          part-form]
+         (when pending [:p {:style {:text-align :center :color :blue}} "... request pending ..."])
+         ]))))

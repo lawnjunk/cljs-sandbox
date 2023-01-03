@@ -33,7 +33,6 @@ select:focus,
 textarea:focus {
   box-shadow: none;
   outline: green dotted 2px;
-  outline-offset: .05em;
 }
 
 input {
@@ -42,4 +41,7 @@ input {
   padding: 0.5em;
 }
 
-
+input:focus {
+  border: 2px solid #63b3cc;
+  outline: none;
+}

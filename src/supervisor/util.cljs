@@ -1,14 +1,17 @@
 (ns supervisor.util
-  (:require 
+  (:require
+     ["pretty-bytes" :as pretty-bytes-lib]
+     ["pretty-ms" :as pretty-ms-lib]
      ["uuid" :as uuidlib]
      [reagent.core :as reagent]
      [garden.units :as units]
      [clojure.string :as s]
-     [clojure.walk :refer [keywordize-keys]] 
+     [clojure.walk :refer [keywordize-keys]]
      [oops.core :as oops]
      [fipp.edn :as fipp]
      [goog.functions :as goof])
   (:import goog.Uri.QueryData))
+
 
 (defn- xxd-create [logger]
   (fn dbg
@@ -21,6 +24,7 @@
 
 (defn pp [& args]
   (apply js/console.log (clj->js args {:keyword-fn str})))
+
 
 (def xxl js/console.log)
 (def xxp pp)
@@ -102,6 +106,7 @@
     data
     (keywordize-keys data)))
 
+; lol could have used (name :value
 (defn keyword->string
   "convert a :keyword into a string without \":\"
   (keyword->string :cool) => \"cool\" "
@@ -123,7 +128,7 @@
   ([]
    (throw "calc args canot be empty"))
   ([& args]
-   (str "calc(" (s/join " " (map unit->string args)) ")"))) 
+   (str "calc(" (s/join " " (map unit->string args)) ")")))
 
 (defn css-class
   "return css class string for truthy
@@ -143,14 +148,25 @@
         (s/join " ")
         (s/trim))))
 
-(defn px-val
-  [val]
-  (if (number? val) val (:magnitude val)))
+(defn parse-number-value->str
+  [value]
+  (cond
+    (keyword? value) (name value)
+    (number? value) value
+    (string? value) value
+  :else (throw "not a parseable number")))
 
-(defn px-div
-  [a b]
-  (units/px (/ (px-val a) (px-val b))))
-(def px-sub units/px-)
-(def px-sum units/px+)
-(def px-mul units/px+)
+(defn parse-int
+  "parse a string number or keyword into an int"
+  [value]
+  (js/parseInt (parse-number-value->str value)))
 
+(defn parse-number
+  "parse a string number or keyword into an float"
+  [value]
+  (.valueOf (js/Number. (parse-number-value->str value))))
+
+(defn- copy-to-clipboard
+  [text]
+  (pp "_COPY_TO_CLIPBOARD_ " text)
+  (.writeText js/navigator.clipboard text))
