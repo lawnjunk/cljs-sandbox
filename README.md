@@ -16,10 +16,23 @@
 ```
 
 # TODO
-* unit-login-form
-* unit-click-copy-icon
 * unit-click-copy-span
-* counter-component
+* unit-blue-dot (with height-js)
+  * would be cool if you could fuzzy filter lines :)
+* unit-search-bar-generic
+  * only sets the search term
+* unit-filter-list-generic
+  * displays a list of data
+  * orders by selectables (create-at name email id...)
+  * filters by a given prop search trem
+    * multi fuzzy (name email id ...)
+  * allows user to provide list item component
+* unit-search-filter
+  * combine (unit-search-bar-generic unit-filter-list-generic)
+* unit-qdb-filter-container
+  * keep track of components on page that need querys
+  (remove querys from qdb when no components are loaded)
+  * probs after a route switch with a tiny delay (allow for rerender)
   * :tag it with a name
   * inc each time componet mount
   * dec when unmount
@@ -68,4 +81,4 @@
 * [garden - css in cljs](https://github.com/noprompt/garden)
 * [spade - a css in cljs garden util](https://github.com/dhleong/spade)
 * [oops - cljs macros for working with js objects](https://github.com/binaryage/cljs-oops)
-* [`goog` closuer-library - googles common js library](https://github.com/google/closure-librarye)
+* [`goog` closuer-library - googles common js library](https://github.com/google/closure-library)

@@ -9,8 +9,10 @@
     [supervisor.style :as style]
     [supervisor.base :as <>]))
 
+; NOTE: to add storys to side pannel just add keys to this map
+; values must be vaild reagent/hiccup
 (def story-route-map
-  {:counter [:div [unit-counter] [unit-counter-doc]]
+  {:magic-counter [:div [unit-counter] [unit-counter-doc]]
    :form-login [story-unit-form-login]
    :click-copy-icon [story-click-copy-icon]
   })
