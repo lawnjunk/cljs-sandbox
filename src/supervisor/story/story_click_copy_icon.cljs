@@ -14,8 +14,7 @@
   (let [pallet (:pallet theme)
         color-about-bg (:black pallet)
         color-about-fg (:white pallet)
-        color-textarea-bg (:button-main pallet)
-        ]
+        color-textarea-bg (:button-main pallet)]
     [:&
      [:.about
       {:background color-about-bg
@@ -49,8 +48,7 @@
          [:div.about
           [:h1 "story unit-click-copy-icon"]
           [:p "rand text: " @rand-text]
-          [<>/ButtonDebug {:on-click #(swap! rand-text rand-text-gen)} "reset text"]
-          ]
+          [<>/ButtonDebug {:on-click #(swap! rand-text rand-text-gen)} "reset text"]]
          [:div.main
           [:section
            [ :h2 "w 30 h 60" ]

@@ -1,10 +1,10 @@
 (ns supervisor.unit.counter
   (:require
+    [supervisor.util :as util]
     [reagent.core :as reagent]
     [spade.core :refer [defclass]]
     [re-frame.core :as reframe]
     [supervisor.side.qdb :as qdb]
-    [supervisor.util :as util]
     [supervisor.base :as <>]))
 
 (defclass css-counter-color [num]

@@ -1,14 +1,18 @@
 (ns supervisor.unit.form-login
   (:require
+    [supervisor.util :as util]
+    [reagent.core :as reagent]
     [spade.core :as spade]
     [re-frame.core :as reframe]
     [fork.re-frame :as fork]
     [supervisor.base :as <>]
     [supervisor.side.ldb :as ldb]
-    [supervisor.util :as util]
+    [supervisor.style :as style]
     [supervisor.data.access-token :as access-token]
     [supervisor.data.request-ctx :as request-ctx]))
 
+
+; TODO STYLE ME
 (spade/defclass css-unit-form-login []
   [:input
    {:margin-bottom :10px}]
@@ -99,19 +103,25 @@
       ])
   )
 
-(defn unit-form-login [opt]
+(defn unit-form-login
+  "*props*
+   (optional) initial-values (map with email password for testing)
+  "
+  [props]
   (let [request-id (util/id-atom)]
     (fn []
       (let [ctx @(request-ctx/fetch @request-id)
-            pending (when ctx (:pending ctx)) ]
-        [:div {:class (css-unit-form-login)}
+            pending (when ctx (:pending ctx))
+            props (dissoc props :initial-values)
+            ]
+        [:div (style/merge-props props {:class (css-unit-form-login)})
          [fork/form
           {:path [:form-login]
            :keywordize-keys true
            :prevent-default? true
            :clean-on-unmount? true
            :on-submit #(reframe/dispatch [:form-login-submit-handler % @request-id])
-           :initial-values (:initial-values opt)}
+           :initial-values (:initial-values props)}
           part-form]
          (when pending [:p {:style {:text-align :center :color :blue}} "... request pending ..."])
          ]))))

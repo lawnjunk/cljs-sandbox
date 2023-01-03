@@ -96,6 +96,18 @@
         (s/join " ")
         (s/trim))))
 
+(defn css-class-concat
+  [list]
+   (s/join " " (filter some? list)))
+
+; TODO whitelist props & variadic
+(defn merge-props
+  "merge two props but keep both classes"
+  [optional required]
+  (let [o-class-name (get optional :class)
+        r-class-name (get required :class) ]
+    (merge optional required
+           {:class (css-class-concat [o-class-name r-class-name])})))
 
 (defn mixin-button-color
   "style the colors for a button like element

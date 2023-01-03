@@ -5,8 +5,8 @@
     [secretary.core :as secretary]
     [supervisor.util :as util]
     [supervisor.location :as location]
-    [supervisor.unit.page-router :refer [unit-page-router]]
-    [supervisor.unit.header :refer [unit-header]]
+    [supervisor.unit.page-router :as page-router]
+    [supervisor.unit.header :as header]
     [supervisor.data.theme :as theme]
     [supervisor.side.qdb :as qdb]
     [supervisor.side.ldb :as ldb]
@@ -33,8 +33,8 @@
       (util/xxp "ldb" ldb)
       (util/xxp "qdb" qdb)
       [:div.supervisor-container
-       [unit-header]
-       [unit-page-router]])))
+       [header/unit]
+       [page-router/unit]])))
 
 (defn render []
   (println "main/render")

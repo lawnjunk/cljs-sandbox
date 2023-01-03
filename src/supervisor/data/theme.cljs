@@ -27,6 +27,8 @@
    :pending-1 :#3a6f72
    :pending-2 :#6c9684
    :header-bg :#68cc86
+   :grey :#999999
+   :broken :#ea2517 ; this color will appear if css is broken
    })
 
 (reframe/reg-event-db
@@ -51,9 +53,17 @@
   :theme-fetch
   (fn [db] (:theme db) ))
 
+(reframe/reg-sub
+  :pallet-fetch
+  (fn [db] (get-in db [:theme :pallet]) ))
+
 (defn fetch
   []
   (reframe/subscribe [:theme-fetch]))
+
+(defn fetch-pallet
+  []
+  (reframe/subscribe [:pallet-fetch]))
 
 (defn init
   []

@@ -3,24 +3,27 @@
     [spade.core :as spade]
     [re-frame.core :as reframe]
     [fork.core :as fork]
-    [supervisor.data.access-token :as access-token]
+    [supervisor.data.access-token :as d-access-token]
+    [supervisor.data.theme :as d-theme]
     [supervisor.unit.form-login :refer [unit-form-login]]
     [supervisor.rand :as random]
     [supervisor.base :as <>]))
 
 (spade/defclass css-story-unit-form-login []
-   [:.about
-    {:background :black
-     :color :white
-     :padding :10px
-     :margin-bottom :10px
-     :height :125px
-     }]
-   [:h2 {:background :#999999
-         :padding :10px
-         :margin [[:20px :0px]]}]
-   [:button {:margin-top :10px
-             :margin-right :10px}])
+  (let [pallet @(d-theme/fetch-pallet) ]
+    [:&
+     [:.about
+      {:background (:black pallet)
+       :color :white
+       :padding :10px
+       :margin-bottom :10px
+       :height :125px
+       }]
+     [:h2 {:background (:grey pallet)
+           :padding :10px
+           :margin [[:20px :0px]]}]
+     [:button {:margin-top :10px
+               :margin-right :10px}]]))
 
 (reframe/reg-event-db
   ::form-login-clear-server-message
@@ -31,8 +34,8 @@
   (reframe/dispatch [::form-login-clear-server-message]))
 
 (defn story-unit-form-login []
-  (let [token  @(access-token/fetch)
-        has-access-token (boolean token)
+  (let [access-token  @(d-access-token/fetch)
+        has-access-token (boolean access-token)
         email (random/email)
         password (random/password)]
     [:div.story {:class (css-story-unit-form-login)}
@@ -43,7 +46,7 @@
         {:on-click #(clear-server-message) }
         "clear error message"]
        [<>/ButtonDebug
-        {:on-click #(access-token/write nil)
+        {:on-click #(d-access-token/write nil)
          :disabled (not has-access-token)}
         "clear access-token"]
        ]

@@ -1,7 +1,7 @@
 (ns supervisor.unit.header
   (:require
-    [spade.core :as spade]
     [supervisor.util :as util]
+    [spade.core :as spade]
     [supervisor.base :as <>]
     [supervisor.style :as style]
     [supervisor.data.theme :as d-theme]
@@ -27,7 +27,7 @@
          )
        ]]]))
 
-(defn unit-header-nav-item
+(defn part-header-nav-item
   "route data from supervisor.data.route"
   [current-route route-data]
   (let [{:keys [link-href link-name tag page]} route-data
@@ -39,13 +39,13 @@
      link-name]
    ))
 
-(defn unit-header-nav []
+(defn unit-header-nav [props]
   (let [current-route @(d-route/fetch)]
-  [:div {:class (css-header-nav )}
+  [:div (style/merge-props props {:class (css-header-nav )})
     [:nav
      (->> d-route/route-list
          (filter :show-as-nav-link)
-         (map (partial unit-header-nav-item current-route)))
+         (map (partial part-header-nav-item current-route)))
      ]]))
 
 (spade/defclass css-header []
@@ -56,9 +56,9 @@
      :width :100%
      :height header-height}))
 
-(defn unit-header
-  []
-  [:header {:class (css-header)}
+(defn unit
+  [props]
+  [:header (style/merge-props props {:class (css-header)})
    [unit-header-request-pending-icon]
    [unit-header-nav]
    ])

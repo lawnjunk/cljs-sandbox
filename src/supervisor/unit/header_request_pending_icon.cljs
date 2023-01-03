@@ -1,10 +1,10 @@
 (ns supervisor.unit.header-request-pending-icon
   (:require
+    [supervisor.util :as util]
     [reagent.core :as reagent]
     [spade.core :as spade]
     [supervisor.data.theme :as d-theme]
     [supervisor.data.request-metrix :as d-metrix]
-    [supervisor.util :as util]
     [supervisor.style :as style])
   )
 
@@ -59,13 +59,13 @@
 ; when unit-header-request-pending-icon is clicked?
 ; or mabey just pretty print db on click
 
-(defn unit-header-request-pending-icon []
+(defn unit-header-request-pending-icon [props]
   (let [theme @(d-theme/fetch)
         request-metrix @(d-metrix/fetch)
         pending (:pending request-metrix)
         is-pending (not= 0 pending)
         pending-content (if is-pending pending "")]
     (if-not is-pending (reset! is-skew-pos (not @is-skew-pos)))
-    [:div {:class (css-header-request-pending-icon theme is-pending)}
+    [:div (style/merge-props props {:class (css-header-request-pending-icon theme is-pending)})
       [:button.pending-icon
        {:on-click #(println "request-metrix" request-metrix)} pending-content]]))

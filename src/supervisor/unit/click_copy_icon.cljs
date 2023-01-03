@@ -1,16 +1,16 @@
 (ns supervisor.unit.click-copy-icon
   (:require
+    [supervisor.util :as util]
     [spade.core :as spade]
-    [garden.selectors :as sel]
     [garden.util :as gutil]
     [supervisor.data.theme :as d-theme]
     [supervisor.style :as style]
-    [supervisor.util :as util]))
+    ))
 
 ; TODO add class for wiglees
 (spade/defclass css-click-copy-icon
-  [theme height width]
-  (let [pallet (:pallet theme)
+  [height width]
+  (let [pallet @(d-theme/fetch-pallet)
         bg-color (or :#a0afbf (:button-debug pallet))]
     [:&
      {:background :black
@@ -41,17 +41,16 @@
 (defn unit
   "click-copy-icon
 
-  ** params **
+  ** props **
   :copy -> text to copy
   :height
   :width"
-  [options]
-  (let [theme @(d-theme/fetch)
-        {:keys [copy height width]} options
-        param (dissoc options :copy :width :height)]
+  [props]
+  (let [{:keys [copy height width]} props
+        param (dissoc props :copy :width :height) ]
     [:button
-     (merge
+     (style/merge-props
+       param
        {:on-click #(util/copy-to-clipboard copy)
-       :class (css-click-copy-icon theme height width)})
+       :class (css-click-copy-icon height width)})
      ]))
-

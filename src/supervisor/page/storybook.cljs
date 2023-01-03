@@ -2,7 +2,6 @@
   (:require
     [spade.core :as spade]
     [supervisor.unit.counter :refer [unit-counter unit-counter-doc]]
-    [supervisor.unit.spinner-list :refer [unit-spinner-list]]
     [supervisor.story.story-form-login :refer [story-unit-form-login]]
     [supervisor.story.story-click-copy-icon :refer [story-click-copy-icon]]
     [supervisor.data.theme :as theme]
@@ -20,7 +19,7 @@
   (let [pallet (:pallet theme)
         main-height (get-in theme [:size :main-height])]
     [:&
-     {:background :red
+     {:background (:broken pallet)
       :width :100%
       :height :100%
       }
@@ -43,7 +42,7 @@
         :height :100%}]
        [:.nav-item
         {:display :block :width :100%
-         :color :black
+         :color (:black pallet)
          :font-size :1.25em
          :padding [[ :2px :10px]]
          :margin-bottom :5px
