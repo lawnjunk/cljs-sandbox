@@ -8,9 +8,9 @@
     [supervisor.base :as <>]
     [supervisor.side.ldb :as ldb]
     [supervisor.style :as style]
+    [supervisor.http.authenticate :as authenticate]
     [supervisor.data.access-token :as access-token]
     [supervisor.data.request-ctx :as request-ctx]))
-
 
 ; TODO STYLE ME
 (spade/defclass css-unit-form-login []
@@ -55,15 +55,9 @@
     (println "values" values)
     (println "dirty" dirty)
     (println "path" path)
-    {:db (-> db
-             (fork/set-submitting :form-login true))
-     ; TODO move into http/authenticate authenticate-fx
-     :api
-     {:request-id request-id
-      :route "/v1/supervisor/authenticate"
-      :req-data values
-      :fx [[:dispatch [:api-v1-supervisor-authenticate]]]
-      }})))
+    {:db (fork/set-submitting db :form-login true)
+     :api (authenticate/api-fx
+            (merge values {:request-id request-id })) })))
 
 ; TODO choose a validation library for deling with forms
 ; + bonus points for lib if there is utility suplamenting fx
@@ -112,6 +106,7 @@
     (fn []
       (let [ctx @(request-ctx/fetch @request-id)
             pending (when ctx (:pending ctx))
+            initial-values (:initial-values props)
             props (dissoc props :initial-values)
             ]
         [:div (style/merge-props props {:class (css-unit-form-login)})
@@ -121,7 +116,7 @@
            :prevent-default? true
            :clean-on-unmount? true
            :on-submit #(reframe/dispatch [:form-login-submit-handler % @request-id])
-           :initial-values (:initial-values props)}
+           :initial-values initial-values}
           part-form]
          (when pending [:p {:style {:text-align :center :color :blue}} "... request pending ..."])
          ]))))
