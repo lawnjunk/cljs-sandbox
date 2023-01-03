@@ -1,33 +1,25 @@
+; NOTE: adding routes ind data/route will automaticly setup the page router
 (ns supervisor.unit.page-router
   (:require
     [spade.core :as spade]
-    [secretary.core :refer [defroute]]
     [supervisor.style :as style]
     [supervisor.util :as util]
-    [supervisor.page.storybook :refer [page-storybook]]
-    [supervisor.page.loading :refer [page-loading]]
     [supervisor.data.theme :as d-theme]
     [supervisor.data.route :as d-route]))
 
-(spade/defclass css-unit-page-router [theme]
-  (let [header-height (get-in theme [:size :header-height])]
+(spade/defclass css-unit-page-router []
+  (let [theme @(d-theme/fetch)
+        header-height (get-in theme [:size :header-height])]
     [:&
      {:width :100vw
-      :height (util/css-calc :100vh :- header-height)}]))
+      :height (style/calc :100vh :- header-height)}]))
 
-(defroute route-page-storybook "/storybook" [query-params]
-  (d-route/goto :storybook query-params nil))
-
-(defroute route-page-storybook-selected "/storybook/:id" [id query-params]
-  (d-route/goto :storybook query-params id))
-
-(defroute route-landing "*" [query-params]
-  (d-route/goto :landing query-params nil))
-
+; TODO add a 404?
 (defn unit-page-router [] ()
-  (let [theme @(d-theme/fetch)
-        route @(d-route/fetch)]
-    [:div.page-router {:class (css-unit-page-router theme)}
-      (case (:page route)
-        :storybook [page-storybook route]
-        [page-loading])]))
+  (let [route @(d-route/fetch)
+        route-tag (get route :tag)
+        route-map (into {} (map #(identity [(:tag  %) %]) d-route/route-list))
+        route-view (get-in route-map [route-tag :view])
+        route-404-view (:view d-route/home-route)]
+    [:div.page-router {:class (css-unit-page-router)}
+     ((or route-view route-404-view) route)]))

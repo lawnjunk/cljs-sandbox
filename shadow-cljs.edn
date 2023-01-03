@@ -27,4 +27,4 @@
            :devtools {:repl-pprint false
                       :http-root "public"
                       :http-port 9999
-                      :http-use-index-files false}}}}
+                      :http-use-index-files true}}}}

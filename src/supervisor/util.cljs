@@ -4,14 +4,9 @@
      ["pretty-ms" :as pretty-ms-lib]
      ["uuid" :as uuidlib]
      [reagent.core :as reagent]
-     [garden.units :as units]
      [clojure.string :as s]
      [clojure.walk :refer [keywordize-keys]]
-     [oops.core :as oops]
-     [fipp.edn :as fipp]
-     [goog.functions :as goof])
-  (:import goog.Uri.QueryData))
-
+     [goog.functions :as goof]))
 
 (defn- xxd-create [logger]
   (fn dbg
@@ -25,6 +20,18 @@
 (defn pp [& args]
   (apply js/console.log (clj->js args {:keyword-fn str})))
 
+
+(defn pretty-bytes
+  "convert bytes into a human readable string
+  (pretty-bytes 987654321) -> \"235 kB\""
+  [byte-count]
+  (.default pretty-bytes-lib 234545))
+
+(defn pretty-ms
+  "convert ms into a human readable string
+  (pretty-ms 954321) -> \"15m 54.3s\""
+  [ms]
+  (.default  pretty-ms-lib ms))
 
 (def xxl js/console.log)
 (def xxp pp)
@@ -107,48 +114,15 @@
     (keywordize-keys data)))
 
 ; lol could have used (name :value
+; TODO refactor to use name
 (defn keyword->string
   "convert a :keyword into a string without \":\"
   (keyword->string :cool) => \"cool\" "
   [value]
   (s/replace (str value) ":" ""))
 
-(defn- unit->string [data]
-  (if (keyword? data) (keyword->string data)
-    (if-not (units/unit? data) data
-      (let [unit (s/replace (str (:unit data)) ":" "")
-            magnitude (:magnitude data) ]
-        (str magnitude unit)))))
 
-(defn css-calc
-  "works with garden/units keywords and strings
-
-  (calc :50vh :- (utits/px 24) :+ \"2em\")
-      => \"calc(50vh - 24px + 2em)\""
-  ([]
-   (throw "calc args canot be empty"))
-  ([& args]
-   (str "calc(" (s/join " " (map unit->string args)) ")")))
-
-(defn css-class
-  "return css class string for truthy
-
-  (css-class {:hidden false :selected true :error true})
-  \"selected error\"
-
-  (css-class \"app-container\" {:theme-dark true :theme-light false})
-  \"app-container theme-dark\"
-  "
-  ([data] (css-class "" data))
-  ([original-class-name data]
-    (->> data
-        (filter #(second %))
-        (map #(keyword->string (first %)))
-        ((partial-right conj original-class-name))
-        (s/join " ")
-        (s/trim))))
-
-(defn parse-number-value->str
+(defn- parse-number-value->str
   [value]
   (cond
     (keyword? value) (name value)
@@ -166,7 +140,7 @@
   [value]
   (.valueOf (js/Number. (parse-number-value->str value))))
 
-(defn- copy-to-clipboard
+(defn copy-to-clipboard
   [text]
   (pp "_COPY_TO_CLIPBOARD_ " text)
   (.writeText js/navigator.clipboard text))

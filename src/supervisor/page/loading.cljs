@@ -13,7 +13,9 @@
       {:padding-top :100px
        :text-align :center}]]))
 
-(defn page-loading []
+(defn page
+  "loading page"
+  []
   (let [css-theme @(theme/fetch)]
     [:div {:class (css-page-landing css-theme)}
      [:h1  "loading..." ]]))

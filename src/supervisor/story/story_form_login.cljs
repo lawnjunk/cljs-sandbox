@@ -35,7 +35,7 @@
         has-access-token (boolean token)
         email (random/email)
         password (random/password)]
-    [:div {:class (css-story-unit-form-login)}
+    [:div.story {:class (css-story-unit-form-login)}
      [:div.about
        [:h1 "story unit-form-login" ]
        [:p "ldb has auth-token: " (str has-access-token)]
@@ -47,9 +47,10 @@
          :disabled (not has-access-token)}
         "clear access-token"]
        ]
+     [:div.main
      ; show inital
      [:h2 "empty"]
      [unit-form-login]
      [:h2 "with random values"]
-     [unit-form-login {:initial-values {:email email :password password}}]
+     [unit-form-login {:initial-values {:email email :password password}}]]
      ]))

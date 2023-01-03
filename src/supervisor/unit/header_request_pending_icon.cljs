@@ -1,7 +1,6 @@
 (ns supervisor.unit.header-request-pending-icon
   (:require
     [reagent.core :as reagent]
-    [garden.color :as color]
     [spade.core :as spade]
     [supervisor.data.theme :as d-theme]
     [supervisor.data.request-metrix :as d-metrix]
@@ -24,34 +23,35 @@
   [theme is-pending]
   (let [{:keys [pallet]} theme
         header-height (get-in theme [:size :header-height])
-        size (style/px-sub header-height 20)
-        pad (style/px-div size 2)
+        height (style/px-sub header-height 20)
+        width (style/px-add height 20)
+        pad (style/px-div height 2)
         anime-color-1 (:pending-1 pallet)
         anime-color-2 (:pending-2 pallet)
         ]
     [:&
      {:display :inline-block
-     :width :120px
+     :width (style/px-add width (style/px-mul pad 2))
      :height :100%
      :float :left}
     [:.pending-icon
      {:display :block
       :position :relative
       :background (:pending-2 pallet)
-      :width (style/px-mul size 12)
       :animation-name (if is-pending (anime-header-request-pending-icon anime-color-1 anime-color-2) :none)
       :animation-direction :alternate
       :animation-iteration-count :infinite
       :animation-duration :200ms
       :border-radius :2%
-      :height size
+      :height height
+      :width width
       :left pad
       :top pad
       :text-align :center
       :font-size :.9em
-      :color (color/lighten (:pending-2 pallet) 30)
+      :color (style/lighten (:pending-2 pallet) 30)
       }
-     [:&:hover {:background (color/darken (:pending-2 pallet) 5)}]
+     [:&:hover {:background (style/darken (:pending-2 pallet) 5)}]
      [:&:active {:background :orange}]
      ]]))
 

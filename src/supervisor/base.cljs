@@ -1,8 +1,6 @@
 (ns supervisor.base
   (:require
     [reagent.core :as reagent]
-    [secretary.core :as secretary]
-    [garden.color :as color]
     [spade.core :refer [defclass]]
     [supervisor.style :as style]
     [supervisor.location :as location]
@@ -64,19 +62,25 @@
 (def Em (el-create :em css-bold))
 
 (defclass css-button
-  [options]
-  (let [ pallet (:pallet options)
+  [theme]
+  (let [pallet (:pallet theme)
         primary-color (:button-main pallet)
         selected-color (:button-selected pallet)]
     [:& { :padding "5px"
          :border "none" }
      (style/mixin-button-color primary-color selected-color)]))
 
-(def Button (el-create :button css-button))
-(def button-debug-css-options
-  {:pallet  { :button-main "#9cb8ed" :button-selected "#a3dbe0" }})
+(defclass css-button-debug
+  [theme]
+  (let [pallet (:pallet theme)
+        primary-color (:button-debug pallet)
+        selected-color (:button-selected pallet)]
+    [:& { :padding "5px"
+         :border "none" }
+     (style/mixin-button-color primary-color selected-color)]))
 
-(def ButtonDebug (el-create :button (partial css-button button-debug-css-options)))
+(def Button (el-create :button css-button))
+(def ButtonDebug (el-create :button css-button-debug))
 (def ButtonSubmit (el-create :input css-button {:type "submit"}))
 
 (defn Hpush[opts & children]
