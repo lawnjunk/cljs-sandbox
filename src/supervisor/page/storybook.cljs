@@ -2,8 +2,8 @@
   (:require
     [spade.core :as spade]
     [supervisor.unit.counter :refer [unit-counter unit-counter-doc]]
-    [supervisor.story.story-form-login :refer [story-unit-form-login]]
-    [supervisor.story.story-click-copy-icon :refer [story-click-copy-icon]]
+    [supervisor.book.story-form-login :refer [story-unit-form-login]]
+    [supervisor.book.story-click-copy-icon :refer [story-click-copy-icon]]
     [supervisor.data.theme :as theme]
     [supervisor.util :as util]
     [supervisor.style :as style]

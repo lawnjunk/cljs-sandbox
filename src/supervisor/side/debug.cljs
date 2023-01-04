@@ -8,5 +8,5 @@
 (reframe/reg-event-fx
   :debug
   (fn [_ [_ & args]]
-    (apply println (util/vconcat [:debug-event] args))))
+    (apply util/pp (util/vconcat [:debug-event] args))))
 

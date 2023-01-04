@@ -1,4 +1,4 @@
-(ns supervisor.story.story-click-copy-icon
+(ns supervisor.book.story-click-copy-icon
   (:require
     [spade.core :as spade]
     [reagent.core :as reagent]
