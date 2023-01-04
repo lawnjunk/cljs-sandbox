@@ -5,7 +5,7 @@
     [oops.core :as oops]
     [supervisor.data.theme :as d-theme]
     [supervisor.base :as <>]
-    [supervisor.rand :as fake]
+    [supervisor.fake :as fake]
     [supervisor.style :as style]
     [supervisor.unit.click-copy-icon :as click-copy-icon]))
 

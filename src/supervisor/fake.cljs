@@ -1,4 +1,4 @@
-(ns supervisor.rand
+(ns supervisor.fake
    (:require
     [clojure.string :as s]
     [oops.core :as oops]

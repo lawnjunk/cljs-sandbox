@@ -6,7 +6,7 @@
     [supervisor.data.access-token :as d-access-token]
     [supervisor.data.theme :as d-theme]
     [supervisor.unit.form-login :as form-login]
-    [supervisor.rand :as random]
+    [supervisor.fake :as fake]
     [supervisor.base :as <>]))
 
 (spade/defclass css-story-unit-form-login []
@@ -36,8 +36,8 @@
 (defn story-unit-form-login []
   (let [access-token  @(d-access-token/fetch)
         has-access-token (boolean access-token)
-        email (random/email)
-        password (random/password)]
+        email (fake/email)
+        password (fake/password)]
     [:div.story {:class (css-story-unit-form-login)}
      [:div.about
        [:h1 "story unit-form-login" ]
