@@ -16,7 +16,7 @@
      [clojure.string :as s]
      [secretary.core :as secretary]
      [supervisor.util :as util])
-  (:import goog.Uri.QueryData))   
+  (:import goog.Uri.QueryData))
 
 (defn fetch-route
   "{location.pathname}{location.query}
@@ -39,6 +39,11 @@
     (if (s/starts-with? search "?")
       (s/replace-first search "?" "")
       search)))
+
+(defn back!
+  "go back in history"
+  []
+  (.back js/window.history))
 
 (defn replace-route!
   "using browser history api replace state with new route
@@ -99,7 +104,7 @@
   "
   [value]
   (cond
-    (keyword? value) (js/encodeURIComponent (str value)) 
+    (keyword? value) (js/encodeURIComponent (str value))
     (vector? value) (into [] (map encode-values-for-uri value))
     (list? value) (map encode-values-for-uri value)
     (string? value) (js/encodeURIComponent value)
@@ -133,7 +138,7 @@
 
   if the string starts with ':' it will return a :keyword
 
-  if the string can be parsed as a number without becoming NaN it will 
+  if the string can be parsed as a number without becoming NaN it will
   return a number
   "
   [value]
@@ -194,4 +199,4 @@
   []
   (-> (fetch-query)
       (query-data-from-string)
-      (query-data-to-map)))  
+      (query-data-to-map)))

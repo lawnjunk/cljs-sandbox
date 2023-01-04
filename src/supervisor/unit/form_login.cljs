@@ -59,6 +59,9 @@
      :api (authenticate/api-fx
             (merge values {:request-id request-id })) })))
 
+(spade/defclass css-wat []
+  {:background :red})
+
 ; TODO choose a validation library for deling with forms
 ; + bonus points for lib if there is utility suplamenting fx
 ; and add custom warning bubble if dirty
@@ -93,7 +96,7 @@
         :disabled submitting?
         :on-change handle-change
         :on-blur handle-blur}]
-      [<>/ButtonDebug {:disabled submitting?} "submit" ]
+      [<>/ButtonSubmit {:type "submit" :disabled submitting?} "submit" ]
       ])
   )
 

@@ -18,27 +18,23 @@
 
 (defn- el-create-no-css
   [tag-name ]
-  (fn [options & children]
-    (util/vconcat [tag-name options] children)))
+  (fn [props & children]
+    (util/vconcat [tag-name props] children)))
 
 (defn- el-create-with-css
   [tag-name style]
-  (fn [options & children]
+  (fn [props & children]
     (util/vconcat [tag-name
-                   (merge
-                     options
-                     {:class (el-create-class-option options style)})]
+                   (style/merge-props
+                     {:class (el-create-class-option props style)}
+                     props
+                     )]
                   children)))
 
 (defn- el-create-with-attribute
   [tag-name style attribute]
-  (fn [options & children]
-    (util/vconcat [tag-name
-                   (merge
-                     attribute
-                     options
-                     {:class (el-create-class-option options style)})]
-                  children)))
+  (fn [props & children]
+    ((el-create-with-css tag-name style) (style/merge-props attribute props) children)))
 
 (defn- el-create
   ([tag-name] (el-create-no-css tag-name))
@@ -81,25 +77,39 @@
 
 (def Button (el-create :button css-button))
 (def ButtonDebug (el-create :button css-button-debug))
-(def ButtonSubmit (el-create :input css-button {:type "submit"}))
+(def ButtonSubmit (el-create :button css-button-debug {:type "submit"}))
 
-(defn Hpush[opts & children]
-  (let [href (:href opts)]
-    (util/vconcat [:a (merge opts {:on-click
+(defn Hpush
+  "an :a tag that will use the browser history api to pushState"
+  [props & children]
+  (let [href (:href props)]
+    (util/vconcat [:a (style/merge-props props {:on-click
          (fn [e]
            (.preventDefault e)
            (location/push-pathname! href)
            )})]
             children)))
 
-(defn Hreplace[opts & children]
-  (let [href (:href opts)]
-    (util/vconcat [:a (merge opts {:on-click
+(defn Hreplace
+  "an :a tag that will use the browser history api to replaceState"
+  [props & children]
+  (let [href (:href props)]
+    (util/vconcat [:a (style/merge-props props {:on-click
          (fn [e]
            (.preventDefault e)
            (location/replace-pathname! href)
            )})]
             children)))
+
+(defn Hback
+  "an :button tag that will use the browser history api to go back"
+  [props & children]
+  (util/vconcat [:button (style/merge-props props {:on-click
+       (fn [e]
+         (.preventDefault e)
+         (location/back!)
+         )})]
+          children))
 
 (defclass css-clearfix []
   {:content ""
