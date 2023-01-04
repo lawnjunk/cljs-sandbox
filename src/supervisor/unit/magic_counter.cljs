@@ -1,4 +1,6 @@
-(ns supervisor.unit.counter
+; this is not really a unit but it was just used for testing ideas
+; (does not allow for react props)
+(ns supervisor.unit.magic-counter
   (:require
     [supervisor.util :as util]
     [reagent.core :as reagent]
@@ -55,7 +57,7 @@
   [qdb state]
   (qdb/overwrite! (assoc qdb :auto-inc-on state)) )
 
-(defn unit-counter []
+(defn unit []
   (let [qdb @(qdb/fetch)]
     (reagent/create-class
       {:component-did-mount
@@ -96,32 +98,4 @@
              [:p "INTERVAL IN MS: " auto-inc-interval]
              [:p "RANDOM NUMBER: " counter]
              [:p "HSL HUE: " counter-hue]]))})))
-
-(defclass css-unit-counter-doc []
-  {:background "#fafafa"
-   :padding :15px
-   :margin-top :10px}
-  [:ul
-   {:margin-left :15px}
-   [:ul
-    {:margin-left :25px }]])
-
-(defn unit-counter-doc []
-  [:div {:class (css-unit-counter-doc)}
-   [:h1 "when to use db vs qdb vs atoms?"]
-   [:ul
-    [:li "app state goes in db"]
-    [:ul
-     [:li "the random number used to generate the color "]]
-    [:li "user prefernces should stored in qdb"]
-    [:ul
-     [:li "if auto in is on"]
-     [:li "interval in ms"]
-     [:li "if a url is loaded with the query set it will be prefered over defaults"]]
-    [:li "reagent atoms should be used to keep track of component state" ]
-    [:ul
-     [:li "a-delta-* are used to keep track of changes to state so that
-      the old interval can be canceled and a new one can begin"]
-     [:li "a-cancel-fn is used to keep track of the latest interval canel fn"]]
-    ]])
 

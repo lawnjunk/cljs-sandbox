@@ -38,7 +38,7 @@
   []
   (fake/word (fake/integer 1 10)))
 
-(defn story-click-copy-icon
+(defn story-unit-click-copy-icon
   []
   (let [rand-text (reagent/atom (rand-text-gen))
         textarea-state (reagent/atom "")]

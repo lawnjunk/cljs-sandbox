@@ -59,13 +59,13 @@
 ; when unit-header-request-pending-icon is clicked?
 ; or mabey just pretty print db on click
 
-(defn unit-header-request-pending-icon [props]
+(defn unit [props]
   (let [theme @(d-theme/fetch)
         request-metrix @(d-metrix/fetch)
         pending (:pending request-metrix)
         is-pending (not= 0 pending)
         pending-content (if is-pending pending "")]
-    (if-not is-pending (reset! is-skew-pos (not @is-skew-pos)))
+    (when-not is-pending (reset! is-skew-pos (not @is-skew-pos)))
     [:div (style/merge-props props {:class (css-header-request-pending-icon theme is-pending)})
       [:button.pending-icon
        {:on-click #(println "request-metrix" request-metrix)} pending-content]]))

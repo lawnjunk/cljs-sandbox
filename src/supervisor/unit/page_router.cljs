@@ -15,7 +15,10 @@
       :height (style/calc :100vh :- header-height)}]))
 
 ; TODO add a 404?
-(defn unit [props]
+(defn unit
+  "page-router
+  display a page component based on the state of d-route/fetch"
+  [props]
   (let [route @(d-route/fetch)
         route-tag (get route :tag)
         route-map (into {} (map #(identity [(:tag  %) %]) d-route/route-list))

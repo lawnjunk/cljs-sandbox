@@ -5,7 +5,7 @@
     [fork.core :as fork]
     [supervisor.data.access-token :as d-access-token]
     [supervisor.data.theme :as d-theme]
-    [supervisor.unit.form-login :refer [unit-form-login]]
+    [supervisor.unit.form-login :as form-login]
     [supervisor.rand :as random]
     [supervisor.base :as <>]))
 
@@ -53,7 +53,7 @@
      [:div.main
      ; show inital
      [:h2 "empty"]
-     [unit-form-login]
+     [form-login/unit]
      [:h2 "with random values"]
-     [unit-form-login {:initial-values {:email email :password password}}]]
+     [form-login/unit {:initial-values {:email email :password password}}]]
      ]))

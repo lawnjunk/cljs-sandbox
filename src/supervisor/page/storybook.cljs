@@ -1,9 +1,9 @@
 (ns supervisor.page.storybook
   (:require
     [spade.core :as spade]
-    [supervisor.unit.counter :refer [unit-counter unit-counter-doc]]
     [supervisor.book.story-form-login :refer [story-unit-form-login]]
-    [supervisor.book.story-click-copy-icon :refer [story-click-copy-icon]]
+    [supervisor.book.story-click-copy-icon :refer [story-unit-click-copy-icon]]
+    [supervisor.book.story-magic-counter :refer [story-unit-magic-counter]]
     [supervisor.data.theme :as theme]
     [supervisor.util :as util]
     [supervisor.style :as style]
@@ -12,9 +12,9 @@
 ; NOTE: to add storys to side pannel just add keys to this map
 ; values must be vaild reagent/hiccup
 (def story-route-map
-  {:magic-counter [:div [unit-counter] [unit-counter-doc]]
+  {:magic-counter [story-unit-magic-counter]
    :form-login [story-unit-form-login]
-   :click-copy-icon [story-click-copy-icon]
+   :click-copy-icon [story-unit-click-copy-icon]
   })
 
 (spade/defclass css-storybook-left [theme]

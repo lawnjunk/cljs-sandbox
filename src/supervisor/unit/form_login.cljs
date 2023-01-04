@@ -97,9 +97,11 @@
       ])
   )
 
-(defn unit-form-login
-  "*props*
-   (optional) initial-values (map with email password for testing)
+(defn unit
+  "form-login
+
+  optional-props
+    :initial-values (a map with email password for testing)
   "
   [props]
   (let [request-id (util/id-atom)]
