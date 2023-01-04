@@ -17,18 +17,18 @@
 
 (defn lighten
   "lighten a color with a parsable number amount"
-  [color amount]
+  [amount color]
   (gcolor/lighten (as-color color) (util/parse-number amount)))
 
 
 (defn darken
   "darken a color with a parsable number amount"
-  [color amount]
+  [amount color]
   (gcolor/darken (as-color color) (util/parse-number amount)))
 
 (defn opacify
   "opacify a color with a parsable number amount"
-  [color amount]
+  [amount color]
   (gcolor/opacify (as-color color) (util/parse-number amount)))
 
 ; px size
@@ -137,26 +137,26 @@
        :color primary-fg
        :cursor :pointer }
    [:&:focus
-    {:background (darken primary-bg 3)}]
+    {:background (darken 3 primary-bg )}]
    [:&:hover
-    {:background (darken primary-bg 5)} ]
+    {:background (darken 5 primary-bg )} ]
    [:&:active
-    {:background (darken primary-bg 7)} ]
+    {:background (darken 7 primary-bg )} ]
    [:&:disabled
-    {:background  (lighten primary-bg 5)
+    {:background  (lighten 5 primary-bg)
      :color disabled-fg
      :cursor :auto}]
    [:&.selected
     {:background selected-bg
      :color selected-fg}
     [:&:focus
-     {:background (darken selected-bg 5)}]
+     {:background (darken 3 selected-bg)}]
     [:&:hover
-     {:background (darken selected-bg 7)} ]
+     {:background (darken 5 selected-bg)} ]
     [:&:active
-     {:background (darken selected-bg 10)} ]
+     {:background (darken 7 selected-bg)} ]
     [:&:disabled
-     {:background  (lighten selected-bg 5)
+     {:background  (lighten 5 selected-bg)
       :color disabled-fg
       :cursor :auto
       }]

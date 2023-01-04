@@ -20,6 +20,7 @@
    :fg :#000000
    :button-main :#B9C09E
    :button-selected :#B9C09E
+   :input-focus :#63b3cc
    :button-debug :#a0afbf
    :storybook-panel :#74b287
    :storybook-nav-unselected :#4da568

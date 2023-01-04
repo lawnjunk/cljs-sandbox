@@ -17,7 +17,7 @@
       :height height
       :width width
       :outline [[:none :!important]]
-      :border-left [[(style/px-div width 8) :solid (style/lighten bg-color 3)]]
+      :border-left [[(style/px-div width 8) :solid (style/lighten 3 bg-color )]]
       }
      [:&::before
       {:color :white

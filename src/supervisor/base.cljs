@@ -6,7 +6,9 @@
     [supervisor.style :as style]
     [supervisor.location :as location]
     [clojure.string :as string]
+    [garden.stylesheet :refer [at-media]]
     [supervisor.data.theme :as theme]
+    [supervisor.space :as space]
     [supervisor.util :as util]))
 
 (defn- el-create-class-option
@@ -46,6 +48,9 @@
 (defclass css-div-invert [theme]
   (let [pallet (:pallet theme)]
     [:&
+     ; (at-media
+     ;   {:max-width :777px}
+     ;   {:height [[ :auto "!important"]]})
      {:background (:fg pallet)
       :color (:bg pallet)} ]))
 
@@ -71,9 +76,20 @@
      (style/mixin-button-color primary-color selected-color)]))
 
 
-(defclass css-clearfix []
-  {:content ""
-   :clear "both"})
+(defclass css-input [theme]
+  (let [pallet (:pallet theme)
+        input-focus (:input-focus pallet) ]
+    [:&
+     {:width :100%
+      :padding :5px
+      :border [[:2px :solid (:black pallet)]]}
+
+     [:&:focus
+      {:border [[:2px :solid input-focus]]
+       }]
+     ])
+  )
+
 
 (defn Hpush
   "an :a tag that will use the browser history api to pushState"
@@ -107,8 +123,9 @@
          )})]
           children))
 
-(def Clearfix (el-create :span css-clearfix))
-(def DivInvert (el-create :div css-div-invert))
+
+(def Input (el-create :input css-input))
+(def Invert (el-create space/box css-div-invert))
 (def Em (el-create :em css-bold))
 (def Button (el-create :button css-button))
 (def ButtonDebug (el-create :button css-button-debug))

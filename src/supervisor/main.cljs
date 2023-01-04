@@ -20,7 +20,6 @@
 
 ; TODO add date format utils to supervisor.util
 
-
 ;TODO create a way to detect if an element is in the viewport or not
 ; and create hooks didEnterViewport didLeaveViewport
 ; and maby allow for triggers above and below (500px up and down)
@@ -38,6 +37,16 @@
 
 (defn render []
   (println "main/render")
+  (js/console.log "%c the follwing render error is not a bug 😘 -dunk ",
+                  "font-size: 15px;
+                  background: rgb(255,255,255);
+                  background: linear-gradient(90deg, rgba(255,255,255,1) 1%, rgba(77,234,242,1) 22%, rgba(255,183,229,1) 53%, rgba(232,235,225,1) 69%, rgba(198,232,229,1) 86%, rgba(0,212,255,1) 100%);
+                  color: black;
+                  text-align: center;
+                  padding: 2px;
+                  margin: 10px;
+                  border-radius: 13px;"
+                  )
   (let [container (js/document.getElementById "supervisor-container")]
     (reagent.dom/render [app] container)))
 

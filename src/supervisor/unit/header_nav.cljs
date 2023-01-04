@@ -24,11 +24,12 @@
    creates nav links for all routs in supervisor.dat.route/route-list
    where :show-as-nav-link is true"
   [props]
-  (let [current-route @(d-route/fetch)]
+  (let [pallet @(d-theme/fetch-pallet)
+        current-route @(d-route/fetch)]
   [:div (style/merge-props props {:class (css-header-nav )})
     [:nav
      (->> d-route/route-list
          (filter :show-as-nav-link)
-         (map (partial item-header-nav/part current-route)))
+         (map (partial item-header-nav/part current-route pallet)))
      ]]))
 

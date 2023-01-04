@@ -80,7 +80,7 @@
       [:div.server-message-container
        (when server-message
          [:span.server-message {:class (name server-message-type)} server-message])]
-      [:input
+      [<>/Input
        {:name "email"
         :type "text"
         :placeholder "email"
@@ -88,7 +88,7 @@
         :disabled submitting?
         :on-change handle-change
         :on-blur handle-blur}]
-      [:input
+      [<>/Input
        {:name "password"
         :type "password"
         :placeholder "password"

@@ -7,6 +7,7 @@
     [supervisor.data.theme :as d-theme]
     [supervisor.unit.form-login :as form-login]
     [supervisor.fake :as fake]
+    [supervisor.space :as space]
     [supervisor.base :as <>]))
 
 (spade/defclass css-story-unit-form-login []
@@ -20,7 +21,8 @@
      [:h2 {:background (:grey pallet)
            :padding :10px
            :margin [[:20px :0px]]}]
-     [:button {:margin-top :10px
+     [:button {
+               :margin-top :10px
                :margin-right :10px}]]))
 
 (reframe/reg-event-db
@@ -37,21 +39,22 @@
         email (fake/email)
         password (fake/password)]
     [:div.story {:class (css-story-unit-form-login)}
-     [<>/DivInvert {:class "about"}
+     [<>/Invert {:class "about"}
        [:h1 "story unit-form-login!" ]
        [:p "ldb has auth-token: " (str has-access-token)]
-       [<>/ButtonDebug
-        {:on-click #(clear-server-message) }
-        "clear error message"]
-       [<>/ButtonDebug
-        {:on-click #(d-access-token/write nil)
-         :disabled (not has-access-token)}
-        "clear access-token"]
-       ]
+       [space/x-start {}
+         [<>/ButtonDebug
+          {:on-click #(clear-server-message) }
+          "clear error message"]
+         [<>/ButtonDebug
+          {:on-click #(d-access-token/write nil)
+           :disabled (not has-access-token)}
+          "clear access-token"]
+         ]]
      [:div.main
-     ; show inital
-     [:h2 "empty"]
-     [form-login/unit]
-     [:h2 "with random values"]
-     [form-login/unit {:initial-values {:email email :password password}}]]
+       ; show inital
+       [:h2 "empty"]
+       [form-login/unit]
+       [:h2 "with random values"]
+       [form-login/unit {:initial-values {:email email :password password}}]]
      ]))

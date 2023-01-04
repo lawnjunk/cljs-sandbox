@@ -7,16 +7,15 @@
     [supervisor.base :as <>]))
 
 (spade/defclass css-item-header-nav
-  []
-  (let [pallet @(d-theme/fetch-pallet)]
-    [:&
-     {:margin-right :10px
-      :color (:white pallet)
-      :padding [[:2px :5px]]}
-     (style/mixin-button-color
-       (:header-bg pallet)
-       (style/lighten (:header-bg pallet) 10))
-     ]))
+  [pallet]
+  [:&
+   {:margin-right :10px
+    :color (:white pallet)
+    :padding [[:2px :5px]]}
+   (style/mixin-button-color
+     (:header-bg pallet)
+    (style/lighten 10 (:header-bg pallet) ))
+   ])
 
 (defn part
   "item-header-nav
@@ -25,12 +24,12 @@
 
   route-data: a spec from supervisor.data.route
   with :link-href and :link-name"
-  [current-route route-data]
+  [current-route pallet route-data ]
   (let [{:keys [link-href link-name tag page]} route-data
         is-selected (= (:page current-route) page)]
     [<>/Hpush
      {:href link-href
-      :class (style/css-class (css-item-header-nav) {:selected is-selected})
+      :class (style/css-class (css-item-header-nav pallet) {:selected is-selected})
       :key (str "nav-link-" tag)}
      link-name]
    ))

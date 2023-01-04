@@ -49,9 +49,9 @@
       :top pad
       :text-align :center
       :font-size :.9em
-      :color (style/lighten (:pending-2 pallet) 30)
+      :color (style/lighten 30 (:pending-2 pallet))
       }
-     [:&:hover {:background (style/darken (:pending-2 pallet) 5)}]
+     [:&:hover {:background (style/darken 5 (:pending-2 pallet))}]
      [:&:active {:background :orange}]
      ]]))
 
