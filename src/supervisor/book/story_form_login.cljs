@@ -13,9 +13,7 @@
   (let [pallet @(d-theme/fetch-pallet) ]
     [:&
      [:.about
-      {:background (:black pallet)
-       :color :white
-       :padding :10px
+      {:padding :10px
        :margin-bottom :10px
        :height :125px
        }]
@@ -39,8 +37,8 @@
         email (fake/email)
         password (fake/password)]
     [:div.story {:class (css-story-unit-form-login)}
-     [:div.about
-       [:h1 "story unit-form-login" ]
+     [<>/DivInvert {:class "about"}
+       [:h1 "story unit-form-login!" ]
        [:p "ldb has auth-token: " (str has-access-token)]
        [<>/ButtonDebug
         {:on-click #(clear-server-message) }

@@ -6,6 +6,7 @@
 ; * fetch-pathname - get window.location.pathname
 ; * fetch-query - get window.location query-string
 ; * fetch-map-from-query - convert the window.location query-string into a cljs map
+; * back! - go back a page with browser history api
 ; * replace-route! - replace window location using browser history api
 ; * replace-pathname! - replace window pathname using browser history api
 ; * replace-query! - replace window query-string using browser history api

@@ -1,6 +1,7 @@
+; all CapCase components in this lib require {} props
+; to be passed [<>/DivInvert {} "example" ]
 (ns supervisor.base
   (:require
-    [reagent.core :as reagent]
     [spade.core :refer [defclass]]
     [supervisor.style :as style]
     [supervisor.location :as location]
@@ -37,25 +38,19 @@
     ((el-create-with-css tag-name style) (style/merge-props attribute props) children)))
 
 (defn- el-create
+  "create a base compenet with preset styles or attributes"
   ([tag-name] (el-create-no-css tag-name))
   ([tag-name style] (el-create-with-css tag-name style))
   ([tag-name style attribute] (el-create-with-attribute tag-name style attribute)))
 
-(defclass css-container [opts]
-  (let [pallet (:pallet opts)]
+(defclass css-div-invert [theme]
+  (let [pallet (:pallet theme)]
     [:&
-     {:background (:container-bg pallet)
-      :color (:container-fg pallet)}
-     ["*" {:color (:container-fg pallet)}]]))
-
-(def Container (el-create :div css-container))
-(def Div (el-create  :div))
-(def Span (el-create :span))
+     {:background (:fg pallet)
+      :color (:bg pallet)} ]))
 
 (defclass css-bold []
   {:font-weight :bold})
-
-(def Em (el-create :em css-bold))
 
 (defclass css-button
   [theme]
@@ -75,9 +70,10 @@
          :border "none" }
      (style/mixin-button-color primary-color selected-color)]))
 
-(def Button (el-create :button css-button))
-(def ButtonDebug (el-create :button css-button-debug))
-(def ButtonSubmit (el-create :button css-button-debug {:type "submit"}))
+
+(defclass css-clearfix []
+  {:content ""
+   :clear "both"})
 
 (defn Hpush
   "an :a tag that will use the browser history api to pushState"
@@ -111,10 +107,9 @@
          )})]
           children))
 
-(defclass css-clearfix []
-  {:content ""
-   :clear "both"})
-
 (def Clearfix (el-create :span css-clearfix))
-
-(def Element reagent/create-class)
+(def DivInvert (el-create :div css-div-invert))
+(def Em (el-create :em css-bold))
+(def Button (el-create :button css-button))
+(def ButtonDebug (el-create :button css-button-debug))
+(def ButtonSubmit (el-create :button css-button-debug {:type "submit"}))
