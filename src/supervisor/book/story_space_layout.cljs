@@ -17,8 +17,7 @@
     [s/box (rand-style-prop :auto :20px) title]
     [s/box (rand-style-prop :auto :20px) title]
     [s/box (rand-style-prop :auto :20px) title]
-    [s/box (rand-style-prop :auto :20px) title]  ]
-  )
+    [s/box (rand-style-prop :auto :20px) title]])
 
 (defn story
   []
@@ -30,6 +29,10 @@
         [b/ButtonDebug
          {:on-click #(reset! height (str (fake/integer 350 650) "px"))}
          "change height"]]
+   [s/hook {:preload #(println "demo componet-will-mount (dont use)")
+            :postload #(println "demo componet-did-mount")
+            :unload #(println "demo compenet-will-unload")}
+    "this can utalize lifecycle hooks"]
         [s/n-row @height
          [s/n-row :10%]
          [s/n-row :90%

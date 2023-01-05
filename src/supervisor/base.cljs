@@ -3,6 +3,7 @@
 (ns supervisor.base
   (:require
     [spade.core :refer [defclass]]
+    [reagent.core :as reagent]
     [supervisor.style :as style]
     [supervisor.location :as location]
     [clojure.string :as string]
@@ -10,6 +11,7 @@
     [supervisor.data.theme :as theme]
     [supervisor.space :as space]
     [supervisor.util :as util]))
+
 
 (defn- el-create-class-option
   [options style]

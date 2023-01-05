@@ -139,3 +139,25 @@
 
 ; normal box
 (def box (make-space css-div))
+
+(defn hook
+  []
+  (let [this (reagent/current-component)
+        props (reagent/props this)
+        children (reagent/children this)
+        pre-mount (:preload props)
+        pre-mount-conf (when pre-mount
+                         {:component-will-mount pre-mount})
+        post-mount (:postload props)
+        post-mount-conf (when post-mount
+                          {:component-did-mount post-mount})
+        pre-unmount (:unload props)
+        pre-unmount-conf (when post-mount
+                          {:component-will-unmount pre-unmount})
+        props (dissoc props :preload :postload :unload)
+        debug-props (when environ/DEBUG_BOXES {:style {:background (fake/color-rgb)}})
+        css-props (merge debug-props {:class (css-div)})
+        props (style/merge-props props css-props)
+        render-conf {:render (fn [] [into [:div props] children])}
+        conf (merge render-conf pre-mount-conf post-mount-conf pre-unmount-conf)]
+    (reagent/create-class conf)))

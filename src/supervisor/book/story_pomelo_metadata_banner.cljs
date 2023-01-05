@@ -15,4 +15,5 @@
   [s/box
    [b/About {}
     [:h2 "unit-story-metadata-banner"]]
-   [pomelo-metadat-banner/unit]])
+   [pomelo-metadat-banner/unit]
+   ])
