@@ -62,7 +62,7 @@
   px-mod (create-px-math mod))
 
 (defn- unit->string [data]
-  (if (keyword? data) (util/keyword->string data)
+  (if (keyword? data) (name data)
     (if-not (units/unit? data) data
       (let [unit (s/replace (str (:unit data)) ":" "")
             magnitude (:magnitude data) ]
@@ -91,7 +91,7 @@
   ([original-class-name data]
     (->> data
         (filter #(second %))
-        (map #(util/keyword->string (first %)))
+        (map #(name (first %)))
         ((util/partial-right conj original-class-name))
         (s/join " ")
         (s/trim))))

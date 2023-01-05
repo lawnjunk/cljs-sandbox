@@ -1,6 +1,6 @@
 (ns supervisor.fake
    (:require
-    [clojure.string :as s]
+    [clojure.string :as string]
     [oops.core :as oops]
     ["@faker-js/faker" :refer [faker]]))
 
@@ -75,7 +75,7 @@
 
 (defn ^:export email
   []
-  (s/lower-case (js->clj ((oops/oget faker "internet.email")))))
+  (string/lower-case (js->clj ((oops/oget faker "internet.email")))))
 
 (defn ^:export phone-number
   []
@@ -149,3 +149,16 @@
   "days? is the range of days in the past (default 1)"
   [start-date end-date]
   ((oops/oget faker "date.between") start-date end-date))
+
+(defn ^:export data
+  "generate random data"
+  []
+  (let [prop-count (integer 40 200)]
+    (zipmap
+      (map (fn [_] (keyword (string/replace  (word (integer 1 3)) " " "-"))) (range prop-count))
+      (map (fn [_]
+             (case  (rand-int 3)
+               0 (word (rand-int 4))
+               1 (js->clj (js/JSON.parse ((oops/oget faker "datatype.json"))))
+               2 (integer 0 100)
+               (word))) (range prop-count)))))

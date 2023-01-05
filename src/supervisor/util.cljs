@@ -121,7 +121,6 @@
   [value]
   (s/replace (str value) ":" ""))
 
-
 (defn- parse-number-value->str
   [value]
   (cond

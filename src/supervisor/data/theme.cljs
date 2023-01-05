@@ -21,6 +21,7 @@
    :button-main :#B9C09E
    :button-selected :#B9C09E
    :input-focus :#63b3cc
+   :blue-dot :#6eaced
    :button-debug :#a0afbf
    :storybook-panel :#74b287
    :storybook-nav-unselected :#4da568

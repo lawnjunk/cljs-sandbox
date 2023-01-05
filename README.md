@@ -16,7 +16,6 @@
 ```
 
 # TODO
-* unit-click-copy-span
 * unit-blue-dot (with height-js)
   * would be cool if you could fuzzy filter lines :)
 * unit-search-bar-generic

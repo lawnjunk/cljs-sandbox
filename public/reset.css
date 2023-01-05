@@ -54,11 +54,13 @@ input:focus {
 /* wat a wild idea, does this count as a 1stop shop for mobile friendlynes? */
 @media screen and (max-width: 300px) {
   body * {
-    position: static;
+    position: static !important;
     margin: 0 !important;
     display: block !important;
     width: 100% !important;
     height: auto !important;
+    min-height: 25px;
     margin-bottom: 2px !important;
+    transform: none !important;
   }
 }
