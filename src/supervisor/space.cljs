@@ -1,12 +1,14 @@
+; helpful componets for working with space (layout)
 (ns supervisor.space
   (:require
+    [garden.stylesheet :refer [at-media]]
     [reagent.core :as reagent]
+    [spade.core :as spade]
     [supervisor.util :as util]
     [supervisor.fake :as fake]
     [supervisor.style :as style]
     [supervisor.environ :as environ]
-    [garden.stylesheet :refer [at-media]]
-    [spade.core :as spade]))
+    ))
 
 (defn mixin-box-default
   [options]
@@ -23,39 +25,21 @@
       {:max-width :777px}
       {:height [[:auto "!important"]]})])
 
-(spade/defclass css-space-v
-  [size]
-  (mixin-box-default
-    {:height size}))
-
-(spade/defclass css-space-vf
-  [size]
-  (mixin-box-default
-    {:height size
-     :float :left}))
-
-(spade/defclass css-space-h
-  [size]
+(spade/defclass css-space-floatable
+  [is-row is-float size]
+  (let [size-opt (if is-row
+                   {:height size}
+                   {:width size})
+        float-opt (when is-float {:float :left})]
   [:&
     (at-media
       {:max-width :777px}
       {:width :100%
        :height :auto})
     (mixin-box-default
-      {:width size})])
+      (merge size-opt float-opt))]))
 
-(spade/defclass css-space-hf
-  [size]
-  [:&
-    (at-media
-      {:max-width :777px}
-      {:width :100%
-       :height :auto})
-    (mixin-box-default
-      {:width size
-       :float :left})])
-
-(spade/defclass css-space-flex-start
+(spade/defclass css-space-flexable
   [justify-content is-column]
   (let [flex-direction (if is-column :column :row)]
   [:&
@@ -81,11 +65,15 @@
         (when is-column { :height :100%}))
         ))]))
 
+(defn- make-float-space
+  "props is allways required
 
-; getting props and children of current componet
-; https://cljdoc.org/d/reagent/reagent/1.1.1/doc/tutorials/interop-with-react?q=children#getting-props-and-children-of-current-component
+  if environ.DEBUG_BOXES is true, colors will be random
 
-(defn make-normal-space
+  can be a size or a normal props map with :size
+  so the following are equal
+  [s/f-row :42px ...children]
+  [s/f-row {:size :42px ...} ...children]"
   [css-fn]
   (fn [props & children]
     (let [size (if (map? props) (:size props) props)
@@ -96,7 +84,29 @@
       (util/vconcat [:div props] children))))
 
 
-(defn make-flex-space
+; rows and columns
+(def ^{:doc "normal row"}
+  n-row (make-float-space (partial css-space-floatable true false)))
+(def ^{:doc "floated left row"}
+  f-row (make-float-space (partial css-space-floatable true true)))
+(def ^{:doc "normal column"}
+  n-col (make-float-space (partial css-space-floatable false false)))
+(def ^{:doc "floated left column"}
+  f-col (make-float-space (partial css-space-floatable false true)))
+(defn clearfix
+  "a css clearfix to stop floating"
+  [] [:div.clearfix])
+
+; getting props and children of current componet
+; https://cljdoc.org/d/reagent/reagent/1.1.1/doc/tutorials/interop-with-react?q=children#getting-props-and-children-of-current-component
+(defn- make-space
+  "react props are optional
+
+  if environ.DEBUG_BOXES is true, colors will be random
+
+  both are ok
+  [s/box ...children]
+  [s/box {} ...children]"
   [css-fn]
   (fn []
     (let [this (reagent/current-component)
@@ -107,36 +117,25 @@
           props (style/merge-props props css-props)]
       (into [:div props] children))))
 
-(def ^{:doc "normal row"}
-  n-row (make-normal-space css-space-v))
-(def ^{:doc "floated left row"}
-  f-row (make-normal-space css-space-vf))
-(def ^{:doc "normal column"}
-  n-col (make-normal-space css-space-h))
-(def ^{:doc "floated left column"}
-  f-col (make-normal-space css-space-hf))
-
-(defn clearfix
-  "a css clearfix to stop floating"
-  [] [:div.clearfix])
-
+; row flexbox
 (def ^{:doc "flex box (horizontal) justify-content: start"}
-  x-start (make-flex-space (partial css-space-flex-start :start false)))
+  x-start (make-space (partial css-space-flexable :start false)))
 (def ^{:doc "flex box (horizontal) justify-content: end"}
-  x-end (make-flex-space (partial css-space-flex-start :end false)))
+  x-end (make-space (partial css-space-flexable :end false)))
 (def ^{:doc "flex box (horizontal) justify-content: space-evenly"}
-  x-even (make-flex-space (partial css-space-flex-start :space-evenly false)))
+  x-even (make-space (partial css-space-flexable :space-evenly false)))
 (def ^{:doc "flex box (horizontal) justify-content: center"}
-  x-center (make-flex-space (partial css-space-flex-start :center false)))
+  x-center (make-space (partial css-space-flexable :center false)))
 
+; column flexbox
 (def^{:doc "flex box (verticle) justify-content: center"}
-  y-start (make-flex-space (partial css-space-flex-start :start true)))
+  y-start (make-space (partial css-space-flexable :start true)))
 (def ^{:doc "flex box (verticle) justify-content: center"}
-  y-end (make-flex-space (partial css-space-flex-start :end true)))
+  y-end (make-space (partial css-space-flexable :end true)))
 (def ^{:doc "flex box (verticle) justify-content: center"}
-  y-even (make-flex-space (partial css-space-flex-start :space-evenly true)))
+  y-even (make-space (partial css-space-flexable :space-evenly true)))
 (def ^{:doc "flex box (verticle) justify-content: center"}
-  y-center (make-flex-space (partial css-space-flex-start :center true)))
+  y-center (make-space (partial css-space-flexable :center true)))
 
-(def box (make-flex-space css-div))
-
+; normal box
+(def box (make-space css-div))
