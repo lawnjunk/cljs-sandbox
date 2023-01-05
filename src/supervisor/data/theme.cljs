@@ -22,6 +22,8 @@
    :button-selected :#B9C09E
    :input-focus :#63b3cc
    :blue-dot :#6eaced
+   :blue-dot-code-bg :#c3d4b7
+   :blue-dot-modal-bg :#aec0a1
    :button-debug :#a0afbf
    :storybook-panel :#74b287
    :storybook-nav-unselected :#4da568

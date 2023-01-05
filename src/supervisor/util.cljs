@@ -143,3 +143,11 @@
   [text]
   (pp "_COPY_TO_CLIPBOARD_ " text)
   (.writeText js/navigator.clipboard text))
+
+(defn to-json
+  [data]
+  (js/JSON.stringify (clj->js data)))
+
+(defn to-json-pretty
+  [data]
+  (js/JSON.stringify (clj->js data) nil 2))

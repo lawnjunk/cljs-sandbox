@@ -11,7 +11,10 @@
 
 (spade/defclass css-blue-dot []
   (let [pallet @(d-theme/fetch-pallet)
-        dot-color (:blue-dot pallet)]
+        dot-color (:blue-dot pallet)
+        blue-dot-code-bg (:blue-dot-code-bg pallet)
+        blue-dot-modal-bg (:blue-dot-modal-bg pallet)
+        ]
     [:&
      [:.the-dot
       {:width :20px
@@ -24,37 +27,61 @@
 
      [:.the-modal
       {:position :fixed
-       :width :89vw
-       :height :95vh
+       :width :100vw
+       :height :100vh
        :top :50vh
        :left :50vw
-       :background :grey
+       :background blue-dot-modal-bg
        :padding :20px
        :transform [[ "translateY(-50%) translateX(-50%)"]]
        }
       [:button
        {:margin-right :10px}]
       ]
-
+     [:.the-hud
+      {:width :100%
+       :max-width :700px
+       :margin  [[ :0 :auto]] }
+       [:button
+        (style/mixin-button-color blue-dot-code-bg)
+        ]
+      ]
      [:.the-content
-      {:background :#999999
+      {:background blue-dot-code-bg
        :white-space :pre
        :padding :20px
        :height :95%
+       :max-width :700px
+       :margin  [[ :0 :auto]]
        :overflow :scroll
        }]
+     [:code
+      {:background blue-dot-code-bg
+
+
+       }]
      ]))
+
+(defn part-code-highlight
+  [language content]
+  (let [hljs-class-name (str "language-" (name language))]
+    (reagent/create-class
+      {
+      :component-did-mount #(.highlightAll js/hljs)
+      :render
+      (fn []
+        [:code {:class hljs-class-name } content])})))
 
 
 (defn unit
   "blue-dot
-
   this component is for debugging the data inside of a view
   click it to open a modal that exposes the json/edn that the view contins"
   [props]
   (let [is-open (reagent/atom false)
         data (get props :data)
-        content (js/JSON.stringify (clj->js data) nil 2) ]
+        content (util/to-json-pretty data)
+        ]
     (fn []
       [s/box {:class (css-blue-dot) }
        [s/box
@@ -63,9 +90,11 @@
 
        (when @is-open
          [:div {:class "the-modal"}
-          [b/ButtonDebug {:on-click #(swap! is-open not) } "close"]
-          [b/ButtonDebug {:on-click #(util/copy-to-clipboard content)} "copy"]
-          [:div {:class "the-content"}
-            (str content)]
+          [s/box {:class "the-hud"}
+            [b/ButtonDebug {:on-click #(swap! is-open not) } "close"]
+            [b/ButtonDebug {:on-click #(util/copy-to-clipboard content)} "copy"]]
+          [:pre {:class "the-content"}
+           [part-code-highlight :json content]
+           ]
           ])
        ])))

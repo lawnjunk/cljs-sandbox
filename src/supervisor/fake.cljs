@@ -157,8 +157,9 @@
     (zipmap
       (map (fn [_] (keyword (string/replace  (word (integer 1 3)) " " "-"))) (range prop-count))
       (map (fn [_]
-             (case  (rand-int 3)
+             (case  (rand-int 4)
                0 (word (rand-int 4))
                1 (js->clj (js/JSON.parse ((oops/oget faker "datatype.json"))))
                2 (integer 0 100)
+               3 (bool)
                (word))) (range prop-count)))))
