@@ -3,11 +3,6 @@
   src: url("/RobotoMono.ttf");
 }
 
-@font-face {
-  font-family: "Airstrike";
-  src: url("/airstrike.ttf");
-}
-
 html {
   font-size: 100%;
 }
@@ -89,7 +84,7 @@ input:focus {
 .inline { display: inline; }
 .inline-block { display: inline-block; }
 
-/* these colors are only for debugin! */
+/* these color classes are only for debugin! */
 .red {background: #FFC0CB;}
 .yellow {background: #FFFACD;}
 .blue {background: #ADD8E6;}
