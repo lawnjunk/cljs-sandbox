@@ -21,7 +21,7 @@
    (interceptors/map->ResponseFormat
      {:description "custom json response format"
       :content-type ["application/json"]
-      :read (fn [xhrio] 
+      :read (fn [xhrio]
               (let [header (protocols/-get-all-headers xhrio)
                     text (protocols/-body xhrio)
                     data (when (not (empty? text))
@@ -101,7 +101,7 @@
   ":none and :raw both need raw"
   [format-type]
   (case format-type
-    :json custom-json-response-format 
+    :json custom-json-response-format
     custom-raw-response-format))
 
 (defn- get-request-format
@@ -132,7 +132,7 @@
         ajax (ajax/ajax-request
                {:uri url
                 :method method
-                :header req-header
+                :headers req-header
                 :url-params req-query
                 :timeout timeout-in-ms
                 :format req-format-handler

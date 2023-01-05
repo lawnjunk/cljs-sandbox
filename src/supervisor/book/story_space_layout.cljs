@@ -25,11 +25,11 @@
   (let [^String height (reagent/atom "900px")]
     (fn []
       [:div
-       [b/Button
-        {:on-click #(reset! height (str (fake/integer 200 900) "px"))}
-        "chage height"]
-       [b/Invert {}
-        [:h2 {:style {:padding :10px}} "set environ.DEBUG_BOXES to true to better understand this page"]]
+       [b/About {}
+        [:h2 "set environ.DEBUG_BOXES to true to better understand this page"]
+        [b/ButtonDebug
+         {:on-click #(reset! height (str (fake/integer 350 650) "px"))}
+         "change height"]]
         [s/n-row @height
          [s/n-row :10%]
          [s/n-row :90%

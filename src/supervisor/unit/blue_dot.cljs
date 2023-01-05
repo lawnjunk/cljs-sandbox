@@ -16,10 +16,11 @@
         blue-dot-modal-bg (:blue-dot-modal-bg pallet)
         ]
     [:&
+     {:display :inline-block}
      [:.the-dot
-      {:width :20px
-       :height :20px
-       :min-height :20px
+      {:width :15px
+       :height :15px
+       :min-height :15px
        :border-radius :50%
        :background dot-color}
       (style/mixin-button-color dot-color)
@@ -72,7 +73,6 @@
       (fn []
         [:code {:class hljs-class-name } content])})))
 
-
 (defn unit
   "blue-dot
   this component is for debugging the data inside of a view
@@ -83,18 +83,16 @@
         content (util/to-json-pretty data)
         ]
     (fn []
-      [s/box {:class (css-blue-dot) }
+      [s/box {:class (style/css-class-concat [ "blue-dot" (css-blue-dot) ])}
        [s/box
         {:class "the-dot"
          :on-click #(swap! is-open not)}]
-
        (when @is-open
          [:div {:class "the-modal"}
           [s/box {:class "the-hud"}
             [b/ButtonDebug {:on-click #(swap! is-open not) } "close"]
             [b/ButtonDebug {:on-click #(util/copy-to-clipboard content)} "copy"]]
           [:pre {:class "the-content"}
-           [part-code-highlight :json content]
-           ]
+           [part-code-highlight :json content]]
           ])
        ])))

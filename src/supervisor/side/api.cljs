@@ -13,10 +13,10 @@
     (let [ldb (:ldb cofx)
           auth-required (get request-options :auth-required)
           access-token (get ldb :access-token "none")
-          auth-header {:x-supervisor-token access-token}
+          auth-header {"x-supervisor-token" access-token}
           header (-> (get request-options :req-header)
                       (merge (when auth-required auth-header)))]
-      {:api (util/xxdp (merge request-options {:req-header header}))})))
+      {:api (util/xxdp :request-fx (merge request-options {:req-header header}))})))
 
 (reframe/reg-fx
   :api

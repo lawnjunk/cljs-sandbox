@@ -12,13 +12,13 @@
 (spade/defclass css-story-blue-dot []
   {:padding :10px
    :margin-bottom :10px
-   }
-  )
+   })
 
 (defn story-blue-dot
   []
   [s/box
   [b/Invert {:class (css-story-blue-dot)}
-    [:h2 "unit-blu-dot"]]
-  [blue-dot/unit {:data (fake/data)}]
+    [:h2 "unit-blue-dot"]
+    [:p "click the dot to see the raw data"] ]
+  [:p {:class "inline auto-wide"} "the blue dot -> "] [blue-dot/unit {:data (fake/data)}]
   ])

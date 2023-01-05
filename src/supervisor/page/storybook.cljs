@@ -6,6 +6,7 @@
     [supervisor.book.story-magic-counter :refer [story-unit-magic-counter]]
     [supervisor.book.story-space-layout :as space-layout]
     [supervisor.book.story-blue-dot :refer [story-blue-dot]]
+    [supervisor.book.story-pomelo-metadata-banner :refer [story-pomelo-metadata-banner]]
     [supervisor.data.theme :as d-theme]
     [supervisor.util :as util]
     [supervisor.fake :as fake]
@@ -17,10 +18,11 @@
 ; values must be vaild reagent/hiccup
 (def story-route-map
   {:magic-counter [story-unit-magic-counter]
-   :form-login [story-unit-form-login]
-   :blue-dot [story-blue-dot]
-   :click-copy [story-unit-click-copy]
    :space-layout [space-layout/story]
+   :click-copy [story-unit-click-copy]
+   :blue-dot [story-blue-dot]
+   :form-login [story-unit-form-login]
+   :metadata-banner [story-pomelo-metadata-banner]
   })
 
 (spade/defclass css-storybook-page []

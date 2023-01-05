@@ -30,7 +30,7 @@
 
 ; TODO move into http/authenticate
 (reframe/reg-event-fx
-  :api-v1-supervisor-authenticate
+  :handle-api-v1-supervisor-authenticate
   [(ldb/inject)]
   (fn [cofx [_ request-ctx]]
     (let [db (:db cofx)

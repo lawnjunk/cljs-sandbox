@@ -45,11 +45,58 @@ input:focus {
   outline: none;
 }
 
+/* try to only uses these hacky classes
+ * for prototyping and then write cljscss */
+.float { float: left; }
 .clearfix {
   content: "";
   clear: both;
   display: table;
 }
+
+.bold { font-weight: bold; }
+
+.text-center { text-align: center; }
+.box-x-center { margin: 0 auto; }
+
+.box-center {
+  margin: 0 auto;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.auto-wide { width: auto; }
+.auto-tall { height: auto; }
+
+.full-wide { width: 100%; }
+.full-tall { height: 100%; }
+
+.fill {width: 100%; height: 100%;}
+
+.pad-sm { padding: 5px; }
+.pad-xl { padding: 10px; }
+
+.gap-up {margin-top: 10px;}
+.gap-down {margin-bottom: 10px;}
+
+.relative {position: relative;}
+.absolute {position: absolute;}
+.fixed {position: fixed;}
+.static {position: static;}
+
+.block { display: block; }
+.inline { display: inline; }
+.inline-block { display: inline-block; }
+
+/* these colors are only for debugin! */
+.red {background: #FFC0CB;}
+.yellow {background: #FFFACD;}
+.blue {background: #ADD8E6;}
+.green {background: #20B2AA;}
+.orange {background: #F4A460;}
+.white {background: #FFF5EE;}
+.black {background: #024020;}
 
 /* wat a wild idea, does this count as a 1stop shop for mobile friendlynes? */
 @media screen and (max-width: 300px) {
@@ -63,4 +110,27 @@ input:focus {
     margin-bottom: 2px !important;
     transform: none !important;
   }
+
+  .blue-dot .the-dot {
+    width: 100% !important;
+    height: 25px !important;
+    border-radius: 5% !important;
+  }
+  .blue-dot .the-dot::before {
+    text-align: center;
+    content: "the blue dot";
+    padding-left: 10px;
+    color: blue;
+  }
+  .blue-dot .the-content * {
+    width: auto !important;
+    height: auto !important;
+    max-height: 500px !important;
+  }
+  .blue-dot .the-content span {
+    display: inline !important;
+  }
 }
+
+
+

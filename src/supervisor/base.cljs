@@ -48,11 +48,19 @@
 (defclass css-div-invert [theme]
   (let [pallet (:pallet theme)]
     [:&
-     ; (at-media
-     ;   {:max-width :777px}
-     ;   {:height [[ :auto "!important"]]})
      {:background (:fg pallet)
       :color (:bg pallet)} ]))
+
+(defclass css-div-about [theme]
+  (let [pallet (:pallet theme)]
+    [:&
+     {:background (:fg pallet)
+      :padding :10px
+      :color (:bg pallet)}
+      :margin-bottom :10px
+
+
+      ]))
 
 (defclass css-bold []
   {:font-weight :bold})
@@ -126,6 +134,7 @@
 
 (def Input (el-create :input css-input))
 (def Invert (el-create space/box css-div-invert))
+(def About (el-create space/box css-div-about))
 (def Em (el-create :em css-bold))
 (def Button (el-create :button css-button))
 (def ButtonDebug (el-create :button css-button-debug))

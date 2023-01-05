@@ -14,5 +14,5 @@
     {:request-id request-id
      :route "/v1/supervisor/authenticate"
      :req-data payload
-     :fx [[:dispatch [:api-v1-supervisor-authenticate]]]
+     :fx [[:dispatch [:handle-api-v1-supervisor-authenticate]]]
      }))
