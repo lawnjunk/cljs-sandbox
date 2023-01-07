@@ -140,7 +140,7 @@
 (def box (make-space css-div))
 
 (defn hook
-  []
+  [& _]
   (let [this (reagent/current-component)
         props (reagent/props this)
         children (reagent/children this)

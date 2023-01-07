@@ -7,6 +7,7 @@
     [supervisor.util :as util]
     [supervisor.style :as style]
     [supervisor.data.theme :as d-theme]
+    [supervisor.part.code-highlight :as code-highlight]
     ))
 
 (spade/defclass css-blue-dot []
@@ -23,9 +24,7 @@
        :min-height :15px
        :border-radius :50%
        :background dot-color}
-      (style/mixin-button-color dot-color)
-      ]
-
+      (style/mixin-button-color dot-color) ]
      [:.the-modal
       {:position :fixed
        :width :100vw
@@ -45,33 +44,14 @@
        :margin  [[ :0 :auto]] }
        [:button
         (style/mixin-button-color blue-dot-code-bg)
-        ]
-      ]
+        ]]
      [:.the-content
-      {:background blue-dot-code-bg
-       :white-space :pre
-       :padding :20px
-       :height :95%
+      {:height :95%
        :max-width :700px
        :margin  [[ :0 :auto]]
-       :overflow :scroll
-       }]
-     [:code
-      {:background blue-dot-code-bg
-
-
        }]
      ]))
 
-(defn part-code-highlight
-  [language content]
-  (let [hljs-class-name (str "language-" (name language))]
-    (reagent/create-class
-      {
-      :component-did-mount #(.highlightAll js/hljs)
-      :render
-      (fn []
-        [:code (style/tag hljs-class-name) content])})))
 
 (defn unit
   "blue-dot
@@ -92,7 +72,7 @@
           [s/box (style/tag :the-hud)
             [b/ButtonDebug {:on-click #(swap! is-open not) } "close"]
             [b/ButtonDebug {:on-click #(util/copy-to-clipboard content)} "copy"]]
-          [:pre (style/tag :the-content)
-           [part-code-highlight :json content]]
+          [s/box (style/tag :the-content)
+           [code-highlight/part :json content]]
           ])
        ])))
