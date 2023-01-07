@@ -16,10 +16,14 @@
     [supervisor.base :as b]
     [supervisor.unit.changelog :as changelog]
    ))
+(spade/defclass css-story-changelog
+  []
+  [:.changelog
+   {:height (style/calc :100% :- :70px)}])
 
 (defn story
   []
-  [s/box
+  [s/box (style/tag [:full-tall (css-story-changelog)])
    [b/About {}
     [:h1 :unit-changelog]]
    [changelog/unit]])

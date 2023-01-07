@@ -15,39 +15,40 @@
     [supervisor.data.theme :as d-theme]
     [supervisor.unit.blue-dot :as blue-dot]
     [supervisor.part.request-ctx-error-card :as request-ctx-error-card]
-    [supervisor.part.code-highlight :as code-highlight]
+    [supervisor.part.item-changelog :as item-changelog]
     [supervisor.unit.search-bar :as search-bar]
     [supervisor.style :as style]
     [supervisor.util :as util]
     [supervisor.space :as s]))
 
-(spade/defclass css-part-item-changlelog
-  [theme is-lucky]
-  (let [pallet (:pallet theme)
-        error-color (:broken pallet)
-        error-color (style/opacify 0.1 error-color)
-        unlucky-css (if (not is-lucky)
-                    {:background [[error-color "!important"]]} {})]
+(spade/defclass css-changelog
+  []
+  (let [pallet @(d-theme/fetch-pallet)
+        border-color (:storybook-panel pallet)]
     [:&
-     [:.code-highlight
-      unlucky-css
-      [:pre :span :code
-      unlucky-css]]
-      ]))
+     {:position :relative
+      :height (style/calc :100% :- :55px)
+      }
+     [:.counter
+      {:color border-color}]
+     [:.blue-dot
+      {:position :absolute
+       :top :5px
+       :right :5px}]
+     [:.changlog-item-container
+      {:height (style/calc  :100% :- :100px)
+       :overflow :scroll
+       :border-bottom [[:5px :solid border-color]]
+       }
+       [:pre
+        {:overflow :scroll }]
 
-(defn part_item_changelog
-  [theme changelog-data]
-  (let [version (get changelog-data :version "unknown")
-        is-lucky (get changelog-data :isLucky "unknown")
-        build-note (get changelog-data :buildNote "no build note") ]
-  [:div (merge  (style/tag (css-part-item-changlelog theme is-lucky)) {:key (str "changelog-item-" version)})
-   [:h2 version]
-   [code-highlight/part :markdown build-note]]))
-
+      ]
+     ]))
 
 (defn unit
   "unit-changelog"
-  []
+  [props]
   (let [request-id (util/id-atom)
         search-bar-term :changelog]
     (http-pompom-changelog/request @request-id)
@@ -57,7 +58,7 @@
             filter-term @(d-search-bar/fetch-term search-bar-term)
             pending (:pending request-ctx)
             changelog @(d-changelog/fetch)
-            title (if pending "CHANGELOG LOADING..." "CHANGELOG")
+            title (if pending "CHANGELOG LOADING..." "CHANGE_LOG")
             filter-by (str (or filter-term ""))
             total-count (count changelog)
             changelog (filter #(or (util/fuzzy-match? (str (:version %)) filter-by)
@@ -65,14 +66,16 @@
                               changelog)
             showing-count (count changelog)]
         [s/box
+         (style/merge-props
+           (style/tag [:changelog (css-changelog)])
+           props)
          [:h1 title]
          (when changelog [blue-dot/unit {:data changelog}])
          [search-bar/unit {:search-term search-bar-term}]
-         [:p filter-term]
          [request-ctx-error-card/part request-ctx]
          (when changelog
            [:p.counter "count: " total-count " showing: " showing-count])
          [:div (style/tag :changlog-item-container)
-           (map (partial part_item_changelog theme) changelog)]
+           (map (partial item-changelog/part theme) changelog)]
          ]))))
 
