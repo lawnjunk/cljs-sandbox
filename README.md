@@ -14,6 +14,17 @@
       \_     /
         \.__.
 ```
+# generic filter box
+* input
+  * list-name (used as key in qdb)
+  * data-list - arbitrary list of data
+  * filter-predicate
+  * sort-by-main
+  * sort-by-prop-list - list of props to create sort buttons for
+  * item-component
+* qdb state?
+  * (list-name)-sort-by (:getter keyword)
+  * (list-name)-sort-order (:asc :desc)
 
 # TODO
 * unit-filter-list-generic
@@ -23,8 +34,9 @@
     * multi fuzzy (name email id ...)
   * allows user to provide list item component
 * unit-search-filter
-  * combine (unit-search-bar-generic unit-filter-list-generic)
 * unit-qdb-filter-container
+  * combine (unit-search-bar-generic unit-filter-list-generic)
+* sticky-query-cleaner
   * keep track of components on page that need querys
   (remove querys from qdb when no components are loaded)
   * probs after a route switch with a tiny delay (allow for rerender)
@@ -106,3 +118,6 @@
 * [spade - a css in cljs garden util](https://github.com/dhleong/spade)
 * [oops - cljs macros for working with js objects](https://github.com/binaryage/cljs-oops)
 * [`goog` closuer-library - googles common js library](https://github.com/google/closure-library)
+
+# snips
+  * cool sort-by snip: `(sort-by (juxt :lastname :firstname) data)`
