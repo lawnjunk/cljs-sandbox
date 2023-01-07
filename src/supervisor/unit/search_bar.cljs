@@ -46,7 +46,8 @@
   [props]
   (fn []
     (let [search-term (:search-term props)
-          search-value @(d-search-bar/fetch-term search-term)]
+          search-value @(d-search-bar/fetch-term search-term)
+          props (dissoc props :search-term)]
     [s/box (style/merge-props props (style/tag [:search-bar (css-search-bar)]))
      [b/Input
       {:type :text

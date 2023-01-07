@@ -85,13 +85,14 @@
          :border "none" }
      (style/mixin-button-color primary-color selected-color)]))
 
-
 (defclass css-input [theme]
   (let [pallet (:pallet theme)
-        input-focus (:input-focus pallet) ]
+        input-focus (:input-focus pallet)
+        bg (:bg pallet)]
     [:&
      {:width :100%
       :padding :5px
+      :background bg
       :border [[:2px :solid (:black pallet)]]}
 
      [:&:focus

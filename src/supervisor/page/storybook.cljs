@@ -9,7 +9,10 @@
     [supervisor.book.story-pomelo-metadata-banner :refer [story-pomelo-metadata-banner]]
     [supervisor.book.story-search-bar :as search-bar]
     [supervisor.book.story-changelog :as changelog]
+    [supervisor.book.story-filter-box :as filter-box]
+    [supervisor.unit.search-bar :as unit-search-bar]
     [supervisor.data.theme :as d-theme]
+    [supervisor.data.search-bar :as d-search-bar]
     [supervisor.util :as util]
     [supervisor.fake :as fake]
     [supervisor.style :as style]
@@ -18,16 +21,17 @@
 
 ; NOTE: to add storys to side pannel just add keys to this map
 ; values must be vaild reagent/hiccup
-(def story-route-map
+(def story-route-map (into (sorted-map)
   {:magic-counter [story-unit-magic-counter]
    :space-layout [space-layout/story]
    :click-copy [story-unit-click-copy]
    :blue-dot [story-blue-dot]
    :search-bar [search-bar/story]
    :form-login [story-unit-form-login]
+   :filter-box [filter-box/story]
    :metadata-banner [story-pomelo-metadata-banner]
    :changelog [changelog/story]
-  })
+  }))
 
 (spade/defclass css-storybook-page []
   (let [theme @(d-theme/fetch)
@@ -44,6 +48,10 @@
        {:text-align :center
         :margin :10px
         }]
+
+      [:.search-bar
+       [:input {:width :71% :float :left :margin :0}]
+       [:button {:width (style/calc  :30% :- :10px) :float :right}]]
       ]
      [:.storybook-main
       {:background (:bg pallet)
@@ -94,16 +102,26 @@
 (defn story-404 []
   [s/box [:h1 ":)"]])
 
+(defn- show-story?
+  [search-value story-key]
+  (util/fuzzy-match? (name story-key) search-value))
+
 (defn page
   "storybook page"
   [route]
   (let [pallet @(d-theme/fetch-pallet)
+        search-value @(d-search-bar/fetch-term :story)
         current-story-name (keyword (get route :id :none))
-        current-story-view (get story-route-map current-story-name [story-404])]
+        current-story-view (get story-route-map current-story-name [story-404])
+        story-key-list (keys story-route-map)
+        story-key-list (filter (partial show-story? search-value) story-key-list)
+        ]
     [s/box {:class (css-storybook-page)}
      [s/f-col {:class "storybook-panel" :size :15%}
        [:h2 ":story:"]
+       [:p "search-value: " search-value]
+       [unit-search-bar/unit {:search-term :story}]
        [s/box
         (map (partial part-item-storybook-nav current-story-name pallet)
-             (keys story-route-map))]]
+             story-key-list)]]
      [s/f-col {:class "storybook-main" :size :85%} current-story-view ]]))
