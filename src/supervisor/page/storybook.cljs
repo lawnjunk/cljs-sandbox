@@ -7,6 +7,7 @@
     [supervisor.book.story-space-layout :as space-layout]
     [supervisor.book.story-blue-dot :refer [story-blue-dot]]
     [supervisor.book.story-pomelo-metadata-banner :refer [story-pomelo-metadata-banner]]
+    [supervisor.book.story-changelog :as changelog]
     [supervisor.data.theme :as d-theme]
     [supervisor.util :as util]
     [supervisor.fake :as fake]
@@ -23,6 +24,7 @@
    :blue-dot [story-blue-dot]
    :form-login [story-unit-form-login]
    :metadata-banner [story-pomelo-metadata-banner]
+   :changelog [changelog/story]
   })
 
 (spade/defclass css-storybook-page []

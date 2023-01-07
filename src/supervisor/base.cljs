@@ -28,7 +28,8 @@
 (defn- el-create-with-css
   [tag-name style]
   (fn [props & children]
-    (util/vconcat [tag-name
+    (util/vconcat [
+                   tag-name
                    (style/merge-props
                      {:class (el-create-class-option props style)}
                      props
@@ -131,7 +132,6 @@
          (location/back!)
          )})]
           children))
-
 
 (def Input (el-create :input css-input))
 (def Invert (el-create space/box css-div-invert))

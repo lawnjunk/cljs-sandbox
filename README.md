@@ -16,10 +16,6 @@
 ```
 
 # TODO
-* unit-blue-dot (with height-js)
-  * would be cool if you could fuzzy filter lines :)
-* unit-search-bar-generic
-  * only sets the search term
 * unit-filter-list-generic
   * displays a list of data
   * orders by selectables (create-at name email id...)

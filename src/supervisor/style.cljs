@@ -32,9 +32,14 @@
   (gcolor/darken (as-color color) (util/parse-number amount)))
 
 (defn opacify
-  "opacify a color with a parsable number amount"
+  "opacify a color with a parsable number amount
+  from 0.0-1.0 1.0 is fully opaic
+  "
   [amount color]
-  (gcolor/opacify (as-color color) (util/parse-number amount)))
+  (let [amount (* -1 (- 1 amount))]
+    (println "amount" amount)
+    (gcolor/opacify (as-color color) amount)))
+
 
 ; px size
 (defn px-val

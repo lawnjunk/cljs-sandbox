@@ -18,7 +18,10 @@
            :output-dir "public/js"
            :asset-path "/js"
            :closure-defines
-           {supervisor.environ/API_URI "http://localhost:8001"}
+           {
+            supervisor.environ/API_URI "https://staging.api.pomelo.click"
+            ; supervisor.environ/API_URI "http://localhost:8001"
+            }
            :compiler-options
              {:source-map true
               :source-map-include-sources-content true

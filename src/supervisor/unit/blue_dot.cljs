@@ -27,13 +27,12 @@
       (style/mixin-button-color dot-color) ]
      [:.the-modal
       {:position :fixed
-       :width :100vw
-       :height :100vh
-       :top :50vh
-       :left :50vw
+       :width :100%
+       :height :100%
+       :top :0
+       :left :0
        :background blue-dot-modal-bg
        :padding :20px
-       :transform [[ "translateY(-50%) translateX(-50%)"]]
        }
       [:button
        {:margin-right :10px}]
@@ -65,7 +64,7 @@
     (fn []
       [s/box (style/tag [:blue-dot (css-blue-dot)])
        [s/box
-        {:class :the-dot
+        {:class (style/tag-value :the-dot)
          :on-click #(swap! is-open not)}]
        (when @is-open
          [s/box (style/tag :the-modal)

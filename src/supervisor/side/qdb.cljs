@@ -20,10 +20,10 @@
     (location/replace-query-from-map! qdb)))
 
 (defn signal[]
-  (fn [_ _] 
+  (fn [_ _]
     app-qdb))
 
-(defn inject [] 
+(defn inject []
   (reframe/inject-cofx :qdb))
 
 (reframe/reg-event-fx
@@ -55,6 +55,6 @@
 
 (defn hydrate!
   []
-  (println "qdb-hydrate!") 
+  (println "qdb-hydrate!")
   (-> (location/fetch-map-from-query)
       (overwrite!)))

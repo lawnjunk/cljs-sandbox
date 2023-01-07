@@ -4,7 +4,7 @@
      ["pretty-ms" :as pretty-ms-lib]
      ["uuid" :as uuidlib]
      [reagent.core :as reagent]
-     [clojure.string :as s]
+     [clojure.string :as string]
      [clojure.walk :refer [keywordize-keys]]
      [goog.string :as gstring]
      [goog.string.format]
@@ -121,7 +121,7 @@
   "convert a :keyword into a string without \":\"
   (keyword->string :cool) => \"cool\" "
   [value]
-  (s/replace (str value) ":" ""))
+  (string/replace (str value) ":" ""))
 
 (defn- parse-number-value->str
   [value]
@@ -165,3 +165,14 @@
   (printf \"data: %s %d\" some-text some-num)"
   [& args]
   (apply gstring/format args))
+
+(defn fuzzy-match?
+  "returns a boolean if the filter-term fuzzy matches the search-text"
+  [search-text filter-term]
+  (let [filter-term (string/trim filter-term)
+        filter-term (string/replace filter-term #"\W" "")
+        char-list (string/split filter-term #"")
+        fuzzy-text (string/join ".*" char-list)
+        fuzzy-text (str fuzzy-text ".*")
+        fuzzy-regex (re-pattern fuzzy-text)]
+    (boolean (re-find fuzzy-regex search-text))))
