@@ -2,7 +2,6 @@
   (:require
     [supervisor.util :as util]
     [spade.core :as spade]
-    [garden.util :as gutil]
     [supervisor.data.theme :as d-theme]
     [supervisor.style :as style]
     ))
@@ -21,20 +20,20 @@
       }
      [:&::before
       {:color :white
-       :content (gutil/wrap-quotes "シ")
+       :content (util/wrap-quotes "シ")
        :font-size :1.25em
        }]
       [:&:hover::before
        {:font-size :.8em
-        :content (gutil/wrap-quotes "(co")}]
+        :content (util/wrap-quotes "(co")}]
      [:&::after
       {:color :black
-       :content (gutil/wrap-quotes "シ")
+       :content (util/wrap-quotes "シ")
        :font-size :1.25em
        }]
       [:&:hover::after
        {:font-size :.8em
-        :content (gutil/wrap-quotes "py)")}]
+        :content (util/wrap-quotes "py)")}]
       (style/mixin-button-color bg-color)
      ]))
 

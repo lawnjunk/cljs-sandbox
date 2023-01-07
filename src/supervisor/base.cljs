@@ -7,7 +7,6 @@
     [supervisor.style :as style]
     [supervisor.location :as location]
     [clojure.string :as string]
-    [garden.stylesheet :refer [at-media]]
     [supervisor.data.theme :as theme]
     [supervisor.space :as space]
     [supervisor.util :as util]))

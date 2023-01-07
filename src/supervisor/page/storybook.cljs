@@ -33,7 +33,6 @@
     [:&
      {:width :100vw
       :height main-height
-      :background :red
       }
      [:.storybook-panel
       {:background panel-color}
@@ -57,7 +56,6 @@
                              (style/lighten 10))]
     [:&
      {:display :inline-block
-      :background :red
       :width :100%
       :margin-bottom :5px
       :padding :5px
@@ -69,13 +67,15 @@
 (defn part-item-storybook-nav [current-story pallet item-key]
   (let [item-name (name item-key)
         href (str uri-page-storybook "/"  item-name)
-        selected (= current-story item-key)
+        is-selected (= current-story item-key)
         ]
     [b/Hpush
      {:key (str "link-to-" href)
       :href href
       :alt (str "show story: " item-name)
-      :class (style/css-class (css-storybook-nav-item pallet) {:selected selected})}
+      :class (style/tag-value
+               [{:selected is-selected}
+                (css-storybook-nav-item pallet)])}
      "> " item-name ]))
 
 ; TODO store.params.pagename ur somthing auto mod querystring

@@ -71,7 +71,7 @@
       :component-did-mount #(.highlightAll js/hljs)
       :render
       (fn []
-        [:code {:class hljs-class-name } content])})))
+        [:code (style/tag hljs-class-name) content])})))
 
 (defn unit
   "blue-dot
@@ -83,16 +83,16 @@
         content (util/to-json-pretty data)
         ]
     (fn []
-      [s/box {:class (style/css-class-concat [ "blue-dot" (css-blue-dot) ])}
+      [s/box (style/tag [:blue-dot (css-blue-dot)])
        [s/box
-        {:class "the-dot"
+        {:class :the-dot
          :on-click #(swap! is-open not)}]
        (when @is-open
-         [:div {:class "the-modal"}
-          [s/box {:class "the-hud"}
+         [s/box (style/tag :the-modal)
+          [s/box (style/tag :the-hud)
             [b/ButtonDebug {:on-click #(swap! is-open not) } "close"]
             [b/ButtonDebug {:on-click #(util/copy-to-clipboard content)} "copy"]]
-          [:pre {:class "the-content"}
+          [:pre (style/tag :the-content)
            [part-code-highlight :json content]]
           ])
        ])))

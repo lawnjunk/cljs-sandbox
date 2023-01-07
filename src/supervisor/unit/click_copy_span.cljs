@@ -2,7 +2,6 @@
   (:require
     [supervisor.util :as util]
     [spade.core :as spade]
-    [garden.util :as gutil]
     [supervisor.data.theme :as d-theme]
     [supervisor.style :as style]
     ))
@@ -30,7 +29,7 @@
       }]
      [:&::before
       {:color :black
-       :content (gutil/wrap-quotes "シ")
+       :content (util/wrap-quotes "シ")
        :font-size :1.25em
       :font-weight :bold
        }]
@@ -38,12 +37,12 @@
        {:color :black
         :font-size :1em
       :font-weight :bold
-        :content (gutil/wrap-quotes "copy(")}]
+        :content (util/wrap-quotes "copy(")}]
       [:&:hover::after
        {:color :black
        :font-size :1.25em
       :font-weight :bold
-        :content (gutil/wrap-quotes ")")}]
+        :content (util/wrap-quotes ")")}]
      ]))
 
 (defn unit

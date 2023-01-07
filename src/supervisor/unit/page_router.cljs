@@ -24,5 +24,8 @@
         route-map (into {} (map #(identity [(:tag  %) %]) d-route/route-list))
         route-view (get-in route-map [route-tag :view])
         route-404-view (:view d-route/home-route)]
-    [:div.page-router (style/merge-props props {:class (css-unit-page-router)})
+    [:div.page-router
+     (style/merge-props
+       props
+       {:class (css-unit-page-router)})
      [(or route-view route-404-view) route]]))

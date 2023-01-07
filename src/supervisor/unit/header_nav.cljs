@@ -26,7 +26,7 @@
   [props]
   (let [pallet @(d-theme/fetch-pallet)
         current-route @(d-route/fetch)]
-  [:div (style/merge-props props {:class (css-header-nav )})
+  [:div (style/merge-props props {:class (css-header-nav)})
     [:nav
      (->> d-route/route-list
          (filter :show-as-nav-link)

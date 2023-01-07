@@ -1,12 +1,11 @@
 ; helpful componets for working with space (layout)
 (ns supervisor.space
   (:require
-    [garden.stylesheet :refer [at-media]]
     [reagent.core :as reagent]
     [spade.core :as spade]
     [supervisor.util :as util]
     [supervisor.fake :as fake]
-    [supervisor.style :as style]
+    [supervisor.style :as style :refer [at-media]]
     [supervisor.environ :as environ]
     ))
 

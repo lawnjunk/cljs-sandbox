@@ -7,10 +7,6 @@
     [clojure.string :as string]
     [spade.core :as spade]
     [supervisor.style :as style]
-    [re-frame.core :as reframe]
-    [reagent.core :as reagent]
-    [goog.string :as gstring]
-    [goog.string.format]
     [supervisor.util :as util]
     [supervisor.space :as s]
     ))
@@ -32,7 +28,7 @@
   (let [total (get poll :total "x")
         last-week (get poll :lastWeek "x")
         last-month (get poll :lastMonth "x")]
-    (gstring/format "%s(t:%s,w:%s,m:%s)" poll-name total last-week last-month)))
+    (util/printf "%s(t:%s,w:%s,m:%s)" poll-name total last-week last-month)))
 
 (defn unit
   "pomelo-metadata-banner"
@@ -42,12 +38,14 @@
     (fn []
       (let [request-ctx @(d-request-ctx/fetch @request-id)
             pending (:pending request-ctx)
-            is-success (:is-success request-ctx)
-            error-message (string/lower-case (get-in request-ctx [:error :message] ""))
-            error-message (when-not (empty? error-message) (str ": " error-message))
+            error-message (-> (get-in request-ctx [:error :message] "")
+                              (string/lower-case))
+            error-message (when-not (empty? error-message)
+                            (str ": " error-message))
             pomelo-metadata @(d-pomelo-metadata/fetch)
             identity-poll (get pomelo-metadata :identityPoll)
-            identity-poll-str (when identity-poll (format-poll-str "Identity" identity-poll))
+            identity-poll-str (when identity-poll
+                                (format-poll-str "Identity" identity-poll))
             participant-poll (get pomelo-metadata :participantPoll)
             participant-poll-str (when identity-poll
                                    (format-poll-str "Participant" participant-poll))

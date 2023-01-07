@@ -3,11 +3,16 @@
   (:require
     [spade.core :as spade]
     [garden.color :as gcolor]
+    [garden.stylesheet :as gstylesheet]
     [garden.units :as units]
     [clojure.string :as s]
     [reagent.core :as reagent]
     [supervisor.util :as util]))
 
+(defn at-media
+  "create CSS @media rules"
+  [media-queries & rules]
+  (apply gstylesheet/at-media (into [media-queries] rules)))
 
 (defn as-color
   [value]
@@ -78,7 +83,7 @@
   ([& args]
    (str "calc(" (s/join " " (map unit->string args)) ")")))
 
-(defn css-class
+(defn- css-class-form-map
   "return css class string for truthy
 
   (css-class {:hidden false :selected true :error true})
@@ -87,7 +92,7 @@
   (css-class \"app-container\" {:theme-dark true :theme-light false})
   \"app-container theme-dark\"
   "
-  ([data] (css-class "" data))
+  ([data] (css-class-form-map "" data))
   ([original-class-name data]
     (->> data
         (filter #(second %))
@@ -96,18 +101,43 @@
         (s/join " ")
         (s/trim))))
 
-(defn css-class-concat
-  [list]
-   (s/join " " (filter some? list)))
+(defn- css-class-list-for-value
+  [value]
+  (cond
+    (map? value) (s/split (css-class-form-map value) #" ")
+    (vector? value) (into [] (flatten (map css-class-list-for-value value)))
+    (string? value) (s/split value #" ")
+    (keyword? value) [(name value)]
+    :else nil))
 
-; TODO whitelist props & variadic
+(defn tag-value
+  "same as style/tag but doesn't create map for props"
+  [tag]
+  (s/join " " (css-class-list-for-value tag)))
+
+(defn tag
+  "create css class props with ease
+  string | keyword | object | [string|object|keyword]
+
+   (tag \"header-nav\") -> {:class \"header-nav\"}
+
+   (tag [:header-nav]) -> {:class \"header-nav\"}
+
+   (tag {:header-nav true :selecetd true :error false} })
+   ---> {:class \"header-nav selected\"}
+
+   (tag [:header-nav \"selected\" {:error true :loading false}])
+   ---> {:class \"header-nav selected error\"}"
+  [tag]
+  {:class (tag-value tag)})
+
 (defn merge-props
-  "merge two props but keep both classes"
-  [optional required]
-  (let [o-class-name (get optional :class)
-        r-class-name (get required :class) ]
-    (merge optional required
-           {:class (css-class-concat [o-class-name r-class-name])})))
+  "merge a bunch of props but concat all the css classes"
+  [& prop-list]
+  (let [prop-list (filter some? prop-list)
+        css-class (into [] (filter some? (map #(:class %) prop-list)))
+        prop-list (conj prop-list (tag css-class))]
+    (apply merge (reverse prop-list))))
 
 (defn mixin-button-color
   "style the colors for a button like element

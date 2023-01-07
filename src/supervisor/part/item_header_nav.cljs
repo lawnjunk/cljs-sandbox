@@ -29,8 +29,10 @@
         is-selected (= (:page current-route) page)]
     [<>/Hpush
      {:href link-href
-      :class (style/css-class (css-item-header-nav pallet) {:selected is-selected})
-      :key (str "nav-link-" tag)}
+      :key (str "nav-link-" tag)
+      :class (style/tag-value
+               [(css-item-header-nav pallet)
+                {:selected is-selected}])}
      link-name]
    ))
 

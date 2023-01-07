@@ -6,6 +6,8 @@
      [reagent.core :as reagent]
      [clojure.string :as s]
      [clojure.walk :refer [keywordize-keys]]
+     [goog.string :as gstring]
+     [goog.string.format]
      [goog.functions :as goof]))
 
 (defn- xxd-create [logger]
@@ -151,3 +153,15 @@
 (defn to-json-pretty
   [data]
   (js/JSON.stringify (clj->js data) nil 2))
+
+(defn wrap-quotes
+  "wrap escaped quotes arount some text"
+  [text]
+  (str "\"" text "\""))
+
+(defn printf
+  "a string format fn
+
+  (printf \"data: %s %d\" some-text some-num)"
+  [& args]
+  (apply gstring/format args))
